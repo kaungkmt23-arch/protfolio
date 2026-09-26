@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  groupMembers GroupMember[]
+  itemsAdded   Item[]        @relation("AddedBy")
+  itemsChecked Item[]        @relation("CheckedBy")
+  listsCreated List[]
+  groupsCreated Group[]
+}
+
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  inviteCode  String        @unique
+  createdById String
+  createdBy   User          @relation(fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+  members     GroupMember[]
+  lists       List[]
+  itemHistory ItemHistory[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  role     String   @default("member")
+  joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model List {
+  id          String   @id @default(cuid())
+  name        String
+  groupId     String
+  createdById String
+  createdAt   DateTime @default(now())
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  items       Item[]
+}
+
+model Item {
+  id             String    @id @default(cuid())
+  listId         String
+  name           String
+  quantity       Float?
+  unit           String?
+  category       String    @default("Other")
+  notes          String?
+  estimatedPrice Float?
+  actualPrice    Float?
+  isChecked      Boolean   @default(false)
+  addedById      String
+  checkedById    String?
+  checkedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  list           List      @relation(fields: [listId], references: [id], onDelete: Cascade)
+  addedBy        User      @relation("AddedBy", fields: [addedById], references: [id])
+  checkedBy      User?     @relation("CheckedBy", fields: [checkedById], references: [id])
+}
+
+model ItemHistory {
+  id       String  @id @default(cuid())
+  groupId  String
+  name     String
+  category String  @default("Other")
+  unit     String?
+  group    Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, name])
+}

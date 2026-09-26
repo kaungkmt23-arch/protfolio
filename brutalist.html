@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAWFORM — Architecture Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:    #F2EDE4;
+  --ink:   #0A0A08;
+  --red:   #E83A14;
+  --yel:   #F5C800;
+  --sh:    4px 4px 0 #0A0A08;
+  --shh:   7px 7px 0 #0A0A08;
+  --bd:    3px solid #0A0A08;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;font-size:15px;overflow-x:hidden;cursor:none}
+
+/* ── CURSOR: crosshair stamp ── */
+#cur{
+  position:fixed;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  width:20px;height:20px;
+}
+#cur::before,#cur::after{content:'';position:absolute;background:var(--ink)}
+#cur::before{width:2px;height:100%;left:50%;transform:translateX(-50%)}
+#cur::after{width:100%;height:2px;top:50%;transform:translateY(-50%)}
+body.hov #cur::before,body.hov #cur::after{background:var(--red)}
+
+/* ── SCROLL PROG ── */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:var(--red);z-index:9998}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  padding:0 40px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg);
+  border-bottom:var(--bd);
+}
+.n-logo{
+  font-size:1.1rem;font-weight:700;letter-spacing:-.01em;
+  color:var(--ink);text-decoration:none;
+}
+.n-logo b{color:var(--red)}
+.n-ul{display:flex;gap:0;list-style:none}
+.n-ul li{border-left:var(--bd)}
+.n-ul a{
+  display:block;padding:0 18px;height:56px;line-height:56px;
+  font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;
+  transition:background .15s,color .15s;cursor:none;
+}
+.n-ul a:hover{background:var(--ink);color:var(--bg)}
+.n-btn{
+  font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--bg);background:var(--ink);padding:10px 22px;
+  border:var(--bd);box-shadow:var(--sh);
+  text-decoration:none;transition:box-shadow .15s,transform .15s;cursor:none;
+  display:block;
+}
+.n-btn:hover{box-shadow:var(--shh);transform:translate(-1px,-1px)}
+
+/* ── HERO ── */
+.hero{
+  padding:80px 40px 64px;
+  border-bottom:var(--bd);
+  position:relative;overflow:hidden;
+}
+.hero-num{
+  font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(10,10,8,.35);margin-bottom:16px;
+}
+.hero-h{
+  font-size:clamp(4rem,10vw,9.5rem);font-weight:700;line-height:.88;
+  letter-spacing:-.04em;max-width:1100px;
+  position:relative;z-index:1;
+}
+.hero-h .red{color:var(--red)}
+.hero-h .outline{
+  -webkit-text-stroke:3px var(--ink);color:transparent;
+}
+.hero-bottom{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-top:56px;gap:40px;flex-wrap:wrap;
+}
+.hero-p{
+  font-size:.9rem;color:rgba(10,10,8,.55);max-width:320px;line-height:1.7;
+  border-left:3px solid var(--red);padding-left:14px;
+}
+.hero-ctas{display:flex;gap:12px;flex-shrink:0}
+.btn-raw{
+  display:inline-block;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  border:var(--bd);box-shadow:var(--sh);padding:12px 28px;
+  text-decoration:none;transition:box-shadow .15s,transform .15s;cursor:none;
+}
+.btn-raw.fill{background:var(--ink);color:var(--bg)}
+.btn-raw.empty{background:var(--bg);color:var(--ink)}
+.btn-raw:hover{box-shadow:var(--shh);transform:translate(-2px,-2px)}
+.hero-bg-text{
+  position:absolute;bottom:-20px;right:-20px;
+  font-size:clamp(8rem,18vw,18rem);font-weight:700;letter-spacing:-.06em;
+  color:rgba(10,10,8,.04);line-height:1;pointer-events:none;user-select:none;
+  z-index:0;
+}
+
+/* ── MARQUEE ── */
+.mq{overflow:hidden;border-bottom:var(--bd);background:var(--ink);padding:12px 0}
+.mq-t{display:flex;white-space:nowrap;animation:mq 20s linear infinite}
+.mq-i{
+  display:inline-flex;align-items:center;gap:32px;padding:0 32px;
+  font-size:.78rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--bg);
+}
+.mq-i .star{color:var(--red);font-size:.9rem}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── PROJECTS ── */
+.projects{padding:64px 0;border-bottom:var(--bd)}
+.sec-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;margin-bottom:40px;
+}
+.sec-title{font-size:1.8rem;font-weight:700;letter-spacing:-.03em}
+.proj-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0;border-top:var(--bd);
+}
+.proj-item{
+  border-right:var(--bd);border-bottom:var(--bd);
+  position:relative;overflow:hidden;cursor:none;
+  background:var(--bg);
+  transition:background .15s;
+}
+.proj-item:nth-child(3n){border-right:none}
+.proj-item:hover{background:var(--yel)}
+.proj-img{
+  width:100%;height:260px;object-fit:cover;display:block;
+  border-bottom:var(--bd);
+  filter:grayscale(100%);
+  transition:filter .3s;
+}
+.proj-item:hover .proj-img{filter:grayscale(0%)}
+.proj-body{padding:20px 22px}
+.proj-num{font-size:.65rem;font-weight:600;letter-spacing:.2em;color:rgba(10,10,8,.35);margin-bottom:6px}
+.proj-name{font-size:1.05rem;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.proj-meta{font-size:.75rem;color:rgba(10,10,8,.45)}
+.proj-arrow{
+  position:absolute;bottom:20px;right:20px;
+  width:36px;height:36px;border:var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh);background:var(--ink);color:var(--bg);
+  opacity:0;transform:translate(4px,4px);
+  transition:opacity .2s,transform .2s;
+}
+.proj-item:hover .proj-arrow{opacity:1;transform:none}
+
+/* ── SERVICES ── */
+.services{padding:64px 40px;border-bottom:var(--bd)}
+.serv-grid{display:grid;grid-template-columns:1fr 2fr;gap:64px;align-items:start}
+.serv-aside-h{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;margin-bottom:16px}
+.serv-aside-p{font-size:.85rem;color:rgba(10,10,8,.55);line-height:1.7}
+.serv-list{list-style:none}
+.serv-list li{
+  display:flex;align-items:baseline;gap:20px;
+  padding:22px 0;border-bottom:var(--bd);
+  transition:background .15s,padding .15s;cursor:none;
+}
+.serv-list li:hover{background:var(--yel);padding-left:12px;padding-right:12px;margin:0 -12px}
+.serv-n{font-size:.68rem;font-weight:600;letter-spacing:.15em;color:var(--red);flex-shrink:0;padding-top:2px}
+.serv-name{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;flex:1}
+.serv-tag{
+  font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  border:2px solid var(--ink);padding:3px 10px;white-space:nowrap;
+}
+
+/* ── PROCESS ── */
+.process{padding:64px 40px;border-bottom:var(--bd);background:var(--ink);color:var(--bg)}
+.proc-h{font-size:1.5rem;font-weight:700;margin-bottom:40px}
+.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.proc-step{
+  padding:32px 28px;border-right:2px solid rgba(242,237,228,.12);
+}
+.proc-step:last-child{border-right:none}
+.proc-num{
+  font-size:3.5rem;font-weight:700;letter-spacing:-.06em;
+  color:var(--red);line-height:1;margin-bottom:16px;
+}
+.proc-title{font-size:.95rem;font-weight:700;margin-bottom:8px}
+.proc-p{font-size:.8rem;color:rgba(242,237,228,.5);line-height:1.65}
+
+/* ── TESTIMONIALS ── */
+.testi{padding:64px 40px;border-bottom:var(--bd)}
+.testi-h{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;margin-bottom:40px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:var(--bd);box-shadow:var(--sh)}
+.testi-card{
+  padding:28px 24px;border-right:var(--bd);
+  transition:background .15s;
+}
+.testi-card:last-child{border-right:none}
+.testi-card:hover{background:var(--yel)}
+.testi-q{font-size:.9rem;line-height:1.65;margin-bottom:18px}
+.testi-name{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+
+/* ── CONTACT ── */
+.contact{padding:64px 40px}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.contact-h{font-size:clamp(2.4rem,5vw,4rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-bottom:20px}
+.contact-h b{color:var(--red)}
+.contact-p{font-size:.88rem;color:rgba(10,10,8,.55);line-height:1.7;margin-bottom:28px}
+.contact-detail{font-size:.78rem;font-weight:600;letter-spacing:.06em;margin-bottom:8px}
+form{display:flex;flex-direction:column;gap:0}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:0}
+input,textarea{
+  background:var(--bg);border:var(--bd);
+  padding:14px 16px;font-family:'Space Grotesk',sans-serif;
+  font-size:.88rem;color:var(--ink);outline:none;
+  margin-top:-3px;
+  transition:background .15s;
+}
+input:focus,textarea:focus{background:var(--yel)}
+textarea{min-height:120px;resize:none;margin-top:-3px}
+input::placeholder,textarea::placeholder{color:rgba(10,10,8,.35)}
+.f-submit{
+  border:var(--bd);box-shadow:var(--sh);background:var(--ink);color:var(--bg);
+  font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;padding:16px;cursor:none;
+  margin-top:-3px;transition:box-shadow .15s,transform .15s;
+}
+.f-submit:hover{box-shadow:var(--shh);transform:translate(-2px,-2px)}
+
+/* ── FOOTER ── */
+footer{
+  padding:28px 40px;border-top:var(--bd);
+  background:var(--ink);color:var(--bg);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.f-logo{font-size:.9rem;font-weight:700;color:var(--bg);text-decoration:none}
+.f-logo b{color:var(--red)}
+.f-copy{font-size:.72rem;color:rgba(242,237,228,.35)}
+
+/* ── GLITCH ── */
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{
+  content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;
+}
+.glitch::before{
+  color:var(--red);clip-path:polygon(0 0,100% 0,100% 35%,0 35%);
+  transform:translate(-3px,0);animation:glitch1 3s infinite steps(1);
+}
+.glitch::after{
+  color:#00D4FF;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);
+  transform:translate(3px,0);animation:glitch2 3s infinite steps(1);
+}
+@keyframes glitch1{0%,94%{transform:translate(-3px,0)}95%{transform:translate(3px,-2px)}97%{transform:translate(-2px,1px)}100%{transform:translate(-3px,0)}}
+@keyframes glitch2{0%,94%{transform:translate(3px,0)}95%{transform:translate(-3px,2px)}97%{transform:translate(2px,-1px)}100%{transform:translate(3px,0)}}
+
+/* ── MANIFESTO ── */
+.manifesto{
+  padding:80px 40px;
+  background:var(--red);
+  border-bottom:var(--bd);
+  overflow:hidden;position:relative;
+}
+.manifesto-h{
+  font-size:clamp(2.5rem,6vw,5.5rem);font-weight:700;
+  line-height:.92;letter-spacing:-.04em;
+  color:var(--bg);max-width:900px;
+}
+.manifesto-h span{-webkit-text-stroke:2px var(--bg);color:transparent}
+.manifesto-attr{
+  margin-top:28px;font-size:.78rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:rgba(242,237,228,.6);
+}
+
+/* ── STATS NUMBERS ── */
+.nums{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;border-top:var(--bd);border-bottom:var(--bd);
+  background:var(--bg);
+}
+.num-item{
+  padding:40px 32px;border-right:var(--bd);
+  transition:background .15s;
+}
+.num-item:last-child{border-right:none}
+.num-item:hover{background:var(--yel)}
+.num-big{
+  font-size:clamp(3rem,5vw,4.5rem);font-weight:700;
+  letter-spacing:-.05em;line-height:1;
+  margin-bottom:10px;
+}
+.num-big b{color:var(--red)}
+.num-lbl{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(10,10,8,.45)}
+
+/* ── PRESS ── */
+.press{padding:64px 40px;border-bottom:var(--bd)}
+.press-h{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;margin-bottom:36px}
+.press-list{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:var(--bd);box-shadow:var(--sh)}
+.press-item{
+  padding:24px 22px;border-right:var(--bd);
+  transition:background .15s;
+}
+.press-item:last-child{border-right:none}
+.press-item:hover{background:var(--yel)}
+.press-pub{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(10,10,8,.35);margin-bottom:8px}
+.press-q{font-size:.88rem;line-height:1.55}
+.press-yr{font-size:.68rem;font-weight:600;color:var(--red);margin-top:10px}
+
+/* ── TEAM ── */
+.team{padding:64px 40px;border-bottom:var(--bd);background:var(--ink);color:var(--bg)}
+.team-h{font-size:1.5rem;font-weight:700;margin-bottom:36px}
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.team-card{
+  padding:28px 24px;border-right:2px solid rgba(242,237,228,.08);
+  transition:background .15s;
+}
+.team-card:last-child{border-right:none}
+.team-card:hover{background:rgba(245,200,0,.08)}
+.team-img{
+  width:64px;height:64px;border-radius:50%;
+  border:2px solid rgba(242,237,228,.15);
+  margin-bottom:14px;object-fit:cover;
+  filter:grayscale(100%);
+}
+.team-name{font-size:.95rem;font-weight:700;margin-bottom:3px}
+.team-role{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,237,228,.4);margin-bottom:10px}
+.team-bio{font-size:.8rem;color:rgba(242,237,228,.5);line-height:1.6}
+
+/* ── REVEAL ── */
+.r{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.r.on{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.26s}
+
+@media(max-width:1024px){.nums{grid-template-columns:1fr 1fr}.press-list{grid-template-columns:1fr 1fr}.team-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.press-list,.team-grid{grid-template-columns:1fr}.press-item{border-right:none;border-bottom:var(--bd)}.press-item:last-child{border-bottom:none}.team-card{border-right:none;border-bottom:2px solid rgba(242,237,228,.08)}.nums{grid-template-columns:1fr 1fr}}
+
+@media(max-width:1024px){.proj-grid{grid-template-columns:1fr 1fr}.proc-grid{grid-template-columns:1fr 1fr}.proc-step{border-bottom:2px solid rgba(242,237,228,.12)}.serv-grid{grid-template-columns:1fr}.contact-grid{grid-template-columns:1fr}}
+@media(max-width:768px){nav{padding:0 20px}.n-ul{display:none}.hero{padding:48px 20px 48px}.sec-head,.services,.process,.testi,.contact{padding-left:20px;padding-right:20px}.proj-grid,.testi-grid{grid-template-columns:1fr}.testi-card{border-right:none;border-bottom:var(--bd)}.testi-card:last-child{border-bottom:none}.f-row{grid-template-columns:1fr}footer{flex-direction:column;gap:12px;text-align:center;padding:20px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="cur"></div>
+
+<nav>
+  <a href="#" class="n-logo">RAW<b>FORM</b></a>
+  <ul class="n-ul">
+    <li><a href="#projects">Work</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="n-btn">Start a project</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-num">Studio — Est. 2014 — Tokyo / Berlin</div>
+  <h1 class="hero-h">
+    <span class="glitch" data-text="RAWFORM">RAWFORM</span><br>
+    <span class="outline">BUILDS</span> <span class="red">WHAT</span><br>
+    LASTS.
+  </h1>
+  <div class="hero-bottom">
+    <p class="hero-p">Architecture and spatial design for those who believe that the best buildings are the ones that refuse to apologise for existing.</p>
+    <div class="hero-ctas">
+      <a href="#projects" class="btn-raw fill">View work</a>
+      <a href="#contact" class="btn-raw empty">Contact us</a>
+    </div>
+  </div>
+  <div class="hero-bg-text" aria-hidden="true">RAW</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq">
+  <div class="mq-t" aria-hidden="true">
+    <div class="mq-i"><span class="star">★</span> Architecture <span class="star">★</span> Interiors <span class="star">★</span> Urban Design <span class="star">★</span> Adaptive Reuse <span class="star">★</span> Industrial <span class="star">★</span> Residential <span class="star">★</span> Cultural</div>
+    <div class="mq-i"><span class="star">★</span> Architecture <span class="star">★</span> Interiors <span class="star">★</span> Urban Design <span class="star">★</span> Adaptive Reuse <span class="star">★</span> Industrial <span class="star">★</span> Residential <span class="star">★</span> Cultural</div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<section class="projects" id="projects">
+  <div class="sec-head r">
+    <h2 class="sec-title">Selected Work</h2>
+    <a href="#" class="btn-raw empty" style="font-size:.72rem;padding:9px 18px">All projects →</a>
+  </div>
+  <div class="proj-grid">
+    <div class="proj-item r">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" alt="Kōen Cultural Centre">
+      <div class="proj-body">
+        <div class="proj-num">001</div>
+        <div class="proj-name">Kōen Cultural Centre</div>
+        <div class="proj-meta">Tokyo, Japan — 2024</div>
+      </div>
+      <div class="proj-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="proj-item r d1">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=600&q=80" alt="Harzer Warehouse">
+      <div class="proj-body">
+        <div class="proj-num">002</div>
+        <div class="proj-name">Harzer Warehouse</div>
+        <div class="proj-meta">Berlin, Germany — 2023</div>
+      </div>
+      <div class="proj-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="proj-item r d2">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80" alt="Volta Residence">
+      <div class="proj-body">
+        <div class="proj-num">003</div>
+        <div class="proj-name">Volta Residence</div>
+        <div class="proj-meta">Lisbon, Portugal — 2023</div>
+      </div>
+      <div class="proj-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="proj-item r">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80" alt="Ōsaka Housing Block">
+      <div class="proj-body">
+        <div class="proj-num">004</div>
+        <div class="proj-name">Ōsaka Housing Block</div>
+        <div class="proj-meta">Osaka, Japan — 2022</div>
+      </div>
+      <div class="proj-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="proj-item r d1">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" alt="Nord House">
+      <div class="proj-body">
+        <div class="proj-num">005</div>
+        <div class="proj-name">Nord House</div>
+        <div class="proj-meta">Oslo, Norway — 2022</div>
+      </div>
+      <div class="proj-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="proj-item r d2">
+      <img class="proj-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Mitte Studio">
+      <div class="proj-body">
+        <div class="proj-num">006</div>
+        <div class="proj-name">Mitte Studio Complex</div>
+        <div class="proj-meta">Berlin, Germany — 2021</div>
+      </div>
+      <div class="proj-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="serv-grid r">
+    <div>
+      <h2 class="serv-aside-h">What we<br><b style="color:var(--red)">do.</b></h2>
+      <p class="serv-aside-p">We don't do everything. We do a few things exceptionally well and only take on projects where we can be certain the outcome will be worth living in.</p>
+    </div>
+    <div>
+      <ul class="serv-list">
+        <li><span class="serv-n">01</span><span class="serv-name">Architecture</span><span class="serv-tag">Core</span></li>
+        <li><span class="serv-n">02</span><span class="serv-name">Interior Design</span><span class="serv-tag">Core</span></li>
+        <li><span class="serv-n">03</span><span class="serv-name">Urban Planning</span><span class="serv-tag">Strategic</span></li>
+        <li><span class="serv-n">04</span><span class="serv-name">Adaptive Reuse</span><span class="serv-tag">Specialist</span></li>
+        <li><span class="serv-n">05</span><span class="serv-name">Masterplanning</span><span class="serv-tag">Strategic</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <h2 class="proc-h r">How we work</h2>
+  <div class="proc-grid">
+    <div class="proc-step r">
+      <div class="proc-num">01</div>
+      <div class="proc-title">Listen</div>
+      <p class="proc-p">We ask questions others don't. We need to understand not just what you want built, but why it matters and who will live in it.</p>
+    </div>
+    <div class="proc-step r d1">
+      <div class="proc-num">02</div>
+      <div class="proc-title">Propose</div>
+      <p class="proc-p">A single concept. Not options, not alternatives. We study the brief until one solution is clearly right, then we propose it.</p>
+    </div>
+    <div class="proc-step r d2">
+      <div class="proc-num">03</div>
+      <div class="proc-title">Build</div>
+      <p class="proc-p">We stay on site. We build relationships with contractors. We don't disappear after planning approval and reappear at handover.</p>
+    </div>
+    <div class="proc-step r d3">
+      <div class="proc-num">04</div>
+      <div class="proc-title">Endure</div>
+      <p class="proc-p">We return five years later. We want to see how the building has aged. What's held. What hasn't. It makes us better.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi">
+  <h2 class="testi-h r">What clients say</h2>
+  <div class="testi-grid">
+    <div class="testi-card r">
+      <div class="testi-q">"RAWFORM didn't give us what we asked for. They gave us what we needed. It took six months to realise the difference."</div>
+      <div class="testi-name">K. Nakamura — Kōen Foundation</div>
+    </div>
+    <div class="testi-card r d1">
+      <div class="testi-q">"The only architects we've worked with who understood that a good industrial conversion is still industrial. The bones had to stay."</div>
+      <div class="testi-name">F. Bauer — Harzer Gruppe</div>
+    </div>
+    <div class="testi-card r d2">
+      <div class="testi-q">"They were on site more than our contractor. I'm not sure that's normal but I'm glad it happened."</div>
+      <div class="testi-name">A. Ferreira — Private Client</div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <h2 class="manifesto-h r">
+    Good buildings<br>
+    <span>don't apologise</span><br>
+    for existing.
+  </h2>
+  <div class="manifesto-attr r d1">— The Rawform Manifesto, 2014</div>
+</section>
+
+<!-- NUMBERS -->
+<section class="nums">
+  <div class="num-item r">
+    <div class="num-big"><span class="cnt" data-target="47">0</span><b>+</b></div>
+    <div class="num-lbl">Projects completed</div>
+  </div>
+  <div class="num-item r d1">
+    <div class="num-big"><span class="cnt" data-target="12">0</span><b>yrs</b></div>
+    <div class="num-lbl">In practice</div>
+  </div>
+  <div class="num-item r d2">
+    <div class="num-big"><span class="cnt" data-target="8">0</span><b></b></div>
+    <div class="num-lbl">Awards won</div>
+  </div>
+  <div class="num-item r d3">
+    <div class="num-big"><b>2</b></div>
+    <div class="num-lbl">Studio locations</div>
+  </div>
+</section>
+
+<!-- PRESS -->
+<section class="press">
+  <h2 class="press-h r">As seen in</h2>
+  <div class="press-list">
+    <div class="press-item r">
+      <div class="press-pub">Dezeen</div>
+      <div class="press-q">"One of the most uncompromising studios working in Japan today."</div>
+      <div class="press-yr">2025</div>
+    </div>
+    <div class="press-item r d1">
+      <div class="press-pub">Wallpaper*</div>
+      <div class="press-q">"Rawform builds for permanence at a time when everything is temporary."</div>
+      <div class="press-yr">2024</div>
+    </div>
+    <div class="press-item r d2">
+      <div class="press-pub">Frame Mag</div>
+      <div class="press-q">"The Harzer project proves that adaptive reuse doesn't mean polite reuse."</div>
+      <div class="press-yr">2024</div>
+    </div>
+    <div class="press-item r d3">
+      <div class="press-pub">Icon</div>
+      <div class="press-q">"Architecture that refuses to disappear into the background."</div>
+      <div class="press-yr">2023</div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team">
+  <h2 class="team-h r">The people</h2>
+  <div class="team-grid">
+    <div class="team-card r">
+      <img class="team-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=128&q=80" alt="Kenji Mori">
+      <div class="team-name">Kenji Mori</div>
+      <div class="team-role">Principal / Tokyo</div>
+      <div class="team-bio">Founded Rawform after ten years at Kengo Kuma & Associates. Leads design direction across all projects.</div>
+    </div>
+    <div class="team-card r d1">
+      <img class="team-img" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&q=80" alt="Franziska Bauer">
+      <div class="team-name">Franziska Bauer</div>
+      <div class="team-role">Director / Berlin</div>
+      <div class="team-bio">Leads the Berlin office. Specialises in adaptive reuse and industrial conversion projects across Europe.</div>
+    </div>
+    <div class="team-card r d2">
+      <img class="team-img" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&q=80" alt="Tomás Ferreira">
+      <div class="team-name">Tomás Ferreira</div>
+      <div class="team-role">Senior Architect</div>
+      <div class="team-bio">Joined from Alvaro Siza's office in Porto. Manages structural collaboration and material specification.</div>
+    </div>
+    <div class="team-card r d3">
+      <img class="team-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=128&q=80" alt="Yuki Tanaka">
+      <div class="team-name">Yuki Tanaka</div>
+      <div class="team-role">Interior Architect</div>
+      <div class="team-bio">Responsible for all interior architecture and spatial sequencing. Previously at Snøhetta Oslo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-grid">
+    <div class="r">
+      <h2 class="contact-h">Let's build<br>something <b>real.</b></h2>
+      <p class="contact-p">We work with a limited number of clients each year. If you have a project worth building, we'd like to hear about it.</p>
+      <div class="contact-detail">rawform@studio.co</div>
+      <div class="contact-detail">+81 3 1234 5678 — Tokyo</div>
+      <div class="contact-detail">+49 30 1234 5678 — Berlin</div>
+    </div>
+    <div class="r d1">
+      <form>
+        <div class="f-row">
+          <input type="text" placeholder="Name">
+          <input type="email" placeholder="Email">
+        </div>
+        <input type="text" placeholder="Project type">
+        <textarea placeholder="Tell us about the project"></textarea>
+        <button type="submit" class="f-submit">Send enquiry →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a href="#" class="f-logo">RAW<b>FORM</b></a>
+  <p class="f-copy">© 2026 Rawform Studio. Tokyo / Berlin.</p>
+</footer>
+
+<script>
+const prog=document.getElementById('prog');
+window.addEventListener('scroll',()=>{prog.style.width=(scrollY/(document.body.scrollHeight-innerHeight)*100)+'%'},{passive:true});
+const cur=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px'});
+document.querySelectorAll('a,button,.proj-item,.serv-list li').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.08,rootMargin:'0px 0px -32px 0px'});
+document.querySelectorAll('.r').forEach(el=>obs.observe(el));
+const cobs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(!e.isIntersecting)return;
+  const el=e.target,end=+el.dataset.target,t0=performance.now(),dur=1400;
+  (function f(now){const p=Math.min((now-t0)/dur,1),ease=1-Math.pow(1-p,3);el.textContent=Math.round(ease*end);if(p<1)requestAnimationFrame(f)})(performance.now());
+  cobs.unobserve(el);
+}),{threshold:.5});
+document.querySelectorAll('.cnt').forEach(el=>cobs.observe(el));
+</script>
+</body>
+</html>

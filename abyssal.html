@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABYSSAL — The Final Frontier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:    #060A14;
+            --bg2:   #080D18;
+            --cyan:  #00BCD4;
+            --cw:    rgba(0,188,212,.12);
+            --wh:    #E8EDF4;
+            --gr:    #6B7E92;
+            --dim:   #1A2535;
+            --dim2:  #253444;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--wh);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            line-height: 1.65;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── SCROLL PROGRESS ── */
+        #prog {
+            position: fixed; top: 0; left: 0;
+            height: 1px; width: 0%;
+            background: var(--cyan);
+            z-index: 9999;
+            transition: width .1s linear;
+        }
+
+        /* ── CURSOR ── */
+        #cur, #cur-r {
+            position: fixed; border-radius: 50%;
+            pointer-events: none; transform: translate(-50%,-50%);
+        }
+        #cur {
+            width: 8px; height: 8px;
+            background: var(--cyan);
+            z-index: 9998;
+            transition: width .2s, height .2s;
+            mix-blend-mode: screen;
+        }
+        #cur-r {
+            width: 32px; height: 32px;
+            border: 1px solid rgba(0,188,212,.3);
+            z-index: 9997;
+            transition: width .3s, height .3s, border-color .3s;
+        }
+        body.hov #cur   { width: 14px; height: 14px; }
+        body.hov #cur-r { width: 50px; height: 50px; border-color: rgba(0,188,212,.12); }
+
+        /* ── STARS ── */
+        #stars {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0; opacity: .45;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            padding: 24px 52px;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: padding .4s, background .4s, backdrop-filter .4s;
+        }
+        nav.s {
+            padding: 14px 52px;
+            background: rgba(6,10,20,.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,188,212,.06);
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem; font-weight: 700; letter-spacing: .14em;
+            color: var(--wh); text-decoration: none;
+        }
+        .logo b { color: var(--cyan); font-weight: 700; }
+        .nav-ul { display: flex; gap: 36px; list-style: none; }
+        .nav-ul a {
+            font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+            color: var(--gr); text-decoration: none;
+            transition: color .25s; cursor: none;
+        }
+        .nav-ul a:hover { color: var(--wh); }
+        .nav-btn {
+            font-size: .67rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+            color: var(--cyan); border: 1px solid rgba(0,188,212,.4);
+            padding: 9px 22px; text-decoration: none;
+            transition: background .25s, color .25s; cursor: none;
+        }
+        .nav-btn:hover { background: var(--cyan); color: var(--bg); }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 0 52px 80px; z-index: 1;
+        }
+        .hero-media {
+            position: absolute; inset: 0; z-index: -1; overflow: hidden;
+        }
+        .hero-media video, .hero-media img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center 30%;
+            will-change: transform;
+        }
+        .hero-media img { display: none; }
+        .hero-media::after {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                linear-gradient(to bottom, rgba(6,10,20,.5) 0%, rgba(6,10,20,.05) 30%, rgba(6,10,20,.6) 65%, rgba(6,10,20,.97) 100%),
+                linear-gradient(to right,  rgba(6,10,20,.45) 0%, transparent 55%);
+        }
+
+        .hero-tag {
+            font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+            color: var(--cyan); margin-bottom: 18px;
+            display: flex; align-items: center; gap: 12px;
+            opacity: 0; animation: fadeUp .9s cubic-bezier(.16,1,.3,1) .4s forwards;
+        }
+        .hero-tag::before { content:''; width: 30px; height: 1px; background: var(--cyan); }
+
+        .hero-h {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6.5vw, 5.8rem);
+            font-weight: 700; line-height: .9; letter-spacing: -.02em;
+            max-width: 780px; margin-bottom: 36px;
+            opacity: 0; animation: fadeUp 1s cubic-bezier(.16,1,.3,1) .55s forwards;
+        }
+        .hero-h em { font-style: italic; color: var(--cyan); }
+
+        .hero-foot {
+            display: flex; align-items: flex-end; justify-content: space-between;
+            opacity: 0; animation: fadeUp .9s cubic-bezier(.16,1,.3,1) .75s forwards;
+        }
+        .hero-p { font-size: .82rem; color: var(--gr); max-width: 300px; line-height: 1.75; }
+        .hero-btns { display: flex; gap: 10px; flex-shrink: 0; }
+
+        .btn-f {
+            font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+            color: var(--bg); background: var(--cyan); padding: 13px 30px;
+            border: none; text-decoration: none; display: inline-block;
+            transition: background .25s, transform .2s; cursor: none;
+        }
+        .btn-f:hover { background: #26D0E8; transform: translateY(-2px); }
+        .btn-o {
+            font-size: .68rem; font-weight: 400; letter-spacing: .1em; text-transform: uppercase;
+            color: var(--gr); border: 1px solid var(--dim2);
+            padding: 13px 30px; text-decoration: none; display: inline-block;
+            transition: border-color .25s, color .25s; cursor: none;
+        }
+        .btn-o:hover { border-color: var(--gr); color: var(--wh); }
+
+        .scroll-hint {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            opacity: 0; animation: fadeIn 1s .9s forwards;
+        }
+        .s-bar {
+            width: 1px; height: 48px;
+            background: linear-gradient(to bottom, var(--cyan), transparent);
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+        .scroll-hint span {
+            font-size: .58rem; letter-spacing: .22em; text-transform: uppercase;
+            color: var(--gr); writing-mode: vertical-rl;
+        }
+        @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+        /* ── MARQUEE ── */
+        .mq-wrap {
+            position: relative; z-index: 1; overflow: hidden; padding: 11px 0;
+            background: var(--bg2);
+            border-top: 1px solid var(--dim); border-bottom: 1px solid var(--dim);
+        }
+        .mq-track {
+            display: flex; white-space: nowrap;
+            animation: mq 38s linear infinite;
+        }
+        .mq-item {
+            display: flex; align-items: center; gap: 40px; padding: 0 40px;
+            font-size: .63rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gr);
+        }
+        .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; }
+        @keyframes mq { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+        /* ── LAYOUT ── */
+        section { position: relative; z-index: 1; }
+        .w { max-width: 1340px; margin: 0 auto; padding: 0 52px; }
+
+        .lbl {
+            font-size: .6rem; letter-spacing: .28em; text-transform: uppercase;
+            color: var(--cyan); margin-bottom: 22px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .lbl::after { content:''; width: 40px; height: 1px; background: var(--dim2); }
+
+        /* ── REVEAL ── */
+        .r {
+            opacity: 0; transform: translateY(28px);
+            transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+        }
+        .r.on { opacity: 1; transform: none; }
+        .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.32s} .d4{transition-delay:.46s}
+
+        /* ── EDITORIAL ── */
+        .ed { padding: 90px 0; }
+        .ed-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 64px; align-items: center;
+        }
+        .ph { position: relative; overflow: hidden; }
+        .ph img {
+            width: 100%; height: 480px; object-fit: cover; display: block;
+            transition: transform .9s cubic-bezier(.16,1,.3,1);
+            will-change: transform;
+        }
+        .ph:hover img { transform: scale(1.04); }
+        .ph-shade {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(6,10,20,.6) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .ph-badge {
+            position: absolute; bottom: 18px; left: 18px;
+            font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+            color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.1);
+            padding: 4px 10px; backdrop-filter: blur(8px);
+        }
+
+        .ed-h {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.9rem, 2.8vw, 2.5rem);
+            font-weight: 700; line-height: 1.1; letter-spacing: -.02em;
+            margin-bottom: 18px;
+        }
+        .ed-h em { font-style: italic; color: var(--cyan); }
+        .ed-p {
+            font-size: .82rem; color: var(--gr); line-height: 1.8;
+            max-width: 440px; margin-bottom: 12px;
+        }
+        .bq {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem; font-style: italic; color: var(--wh);
+            border-left: 2px solid var(--cyan); padding-left: 20px;
+            margin: 24px 0; line-height: 1.55;
+        }
+        .il {
+            display: inline-flex; align-items: center; gap: 10px; margin-top: 20px;
+            font-size: .67rem; letter-spacing: .15em; text-transform: uppercase;
+            color: var(--cyan); text-decoration: none;
+            transition: gap .25s; cursor: none;
+        }
+        .il svg { transition: transform .25s; flex-shrink: 0; }
+        .il:hover { gap: 16px; }
+        .il:hover svg { transform: translateX(3px); }
+
+        .glow { height: 1px; background: linear-gradient(to right, transparent, rgba(0,188,212,.2), transparent); }
+
+        /* ── STORY SECTION ── */
+        .story { padding: 100px 0; background: var(--bg2); border-top: 1px solid var(--dim); border-bottom: 1px solid var(--dim); }
+        .story-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start; }
+        .story-aside { position: sticky; top: 120px; }
+        .story-aside-h {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 3vw, 2.8rem);
+            font-weight: 700; line-height: 1.1; letter-spacing: -.02em;
+            margin-bottom: 24px;
+        }
+        .story-aside-h em { font-style: italic; color: var(--cyan); }
+        .story-aside-p { font-size: .8rem; color: var(--gr); line-height: 1.8; margin-bottom: 28px; }
+        .story-year {
+            font-size: .62rem; letter-spacing: .2em; text-transform: uppercase;
+            color: var(--dim2); border-top: 1px solid var(--dim); padding-top: 18px;
+        }
+        .story-year span { color: var(--cyan); }
+        .story-body-h {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem; font-weight: 600; margin-bottom: 12px; color: var(--wh);
+        }
+        .story-body p { font-size: .82rem; color: var(--gr); line-height: 1.85; margin-bottom: 18px; max-width: 600px; }
+        .story-body p + .story-body-h { margin-top: 36px; }
+        .story-pull {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem; font-style: italic; color: var(--wh);
+            border-left: 2px solid var(--cyan); padding-left: 20px;
+            margin: 32px 0; line-height: 1.5; max-width: 540px;
+        }
+        .story-img { width: 100%; height: 280px; object-fit: cover; display: block; margin: 28px 0; }
+        .story-caps { font-size: .65rem; color: var(--dim2); letter-spacing: .08em; margin-top: -20px; margin-bottom: 28px; }
+
+        /* ── STATS ── */
+        .stats { padding: 80px 0; border-top: 1px solid var(--dim); border-bottom: 1px solid var(--dim); }
+        .stats-g { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--dim); }
+        .stat { background: var(--bg); padding: 40px 32px; display: flex; flex-direction: column; gap: 6px; }
+        .stat-n {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem; font-weight: 700; line-height: 1;
+        }
+        .stat-n .c { color: var(--wh); }
+        .stat-n .sfx { color: var(--cyan); }
+        .stat-l { font-size: .63rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gr); }
+        .stat-d { font-size: .75rem; color: var(--dim2); margin-top: 4px; }
+
+        /* ── CARDS ── */
+        .cards { padding: 90px 0; }
+        .sec-hd { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 48px; }
+        .sec-t {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.7rem, 2.5vw, 2.2rem);
+            font-weight: 700; line-height: 1.1; letter-spacing: -.02em;
+        }
+        .cards-g { display: grid; grid-template-columns: repeat(3,1fr); gap: 3px; }
+        .card { position: relative; overflow: hidden; cursor: none; }
+        .card img { width: 100%; height: 360px; object-fit: cover; display: block; transition: transform .65s cubic-bezier(.16,1,.3,1); }
+        .card:hover img { transform: scale(1.06); }
+        .card-veil {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(6,10,20,.97) 0%, rgba(6,10,20,.15) 55%, transparent 100%);
+            transition: background .4s;
+        }
+        .card:hover .card-veil { background: linear-gradient(to top, #060a14 0%, rgba(6,10,20,.35) 58%, rgba(0,188,212,.04) 100%); }
+        .card-bd { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px; }
+        .card-code { font-size: .58rem; letter-spacing: .24em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+        .card-name { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 4px; }
+        .card-info { font-size: .7rem; color: var(--gr); margin-bottom: 16px; }
+        .card-go {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+            color: var(--cyan); text-decoration: none;
+            opacity: 0; transform: translateY(5px);
+            transition: opacity .3s, transform .3s; cursor: none;
+        }
+        .card:hover .card-go { opacity: 1; transform: none; }
+
+        /* ── FILMSTRIP ── */
+        .film { padding: 80px 0; overflow: hidden; border-top: 1px solid var(--dim); }
+        .film-head { padding: 0 52px; margin-bottom: 36px; display: flex; align-items: center; justify-content: space-between; }
+        .film-scroll-wrap { overflow: hidden; position: relative; }
+        .film-track {
+            display: flex; gap: 4px;
+            will-change: transform;
+            transition: transform 0s;
+        }
+        .film-item {
+            flex-shrink: 0; position: relative; overflow: hidden; cursor: none;
+            width: 340px; height: 230px;
+        }
+        .film-item img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform .6s ease;
+        }
+        .film-item:hover img { transform: scale(1.06); }
+        .film-veil {
+            position: absolute; inset: 0;
+            background: rgba(6,10,20,0);
+            transition: background .35s;
+            display: flex; align-items: flex-end; padding: 16px;
+        }
+        .film-item:hover .film-veil { background: rgba(6,10,20,.45); }
+        .film-cap {
+            font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
+            color: var(--wh); opacity: 0; transition: opacity .3s;
+        }
+        .film-item:hover .film-cap { opacity: 1; }
+        .film-hint { font-size: .63rem; color: var(--gr); letter-spacing: .1em; display: flex; align-items: center; gap: 8px; }
+        .film-hint svg { opacity: .5; }
+
+        /* ── EARTH ── */
+        .earth { height: 540px; position: relative; overflow: hidden; border-top: 1px solid var(--dim); border-bottom: 1px solid var(--dim); }
+        .earth iframe { width: 100%; height: 100%; border: none; display: block; }
+        .earth-veil {
+            position: absolute; inset: 0; pointer-events: none;
+            background:
+                linear-gradient(to right, rgba(6,10,20,.9) 0%, transparent 42%, rgba(6,10,20,.9) 100%),
+                linear-gradient(to bottom, rgba(6,10,20,.5) 0%, transparent 25%, transparent 75%, rgba(6,10,20,.6) 100%);
+            display: flex; align-items: center;
+        }
+        .earth-tx { padding: 0 64px; max-width: 420px; }
+        .earth-h {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 3vw, 2.6rem);
+            font-weight: 700; line-height: 1.1; margin-bottom: 14px;
+        }
+        .earth-h em { font-style: italic; color: var(--cyan); }
+        .earth-p { font-size: .8rem; color: var(--gr); line-height: 1.75; }
+
+        /* ── GALLERY ── */
+        .gallery { padding: 90px 0; }
+        .gal-g {
+            display: grid;
+            grid-template-columns: 2.1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 4px; margin-top: 48px;
+        }
+        .gi { position: relative; overflow: hidden; cursor: none; min-height: 220px; }
+        .gi:first-child { grid-row: 1/3; }
+        .gi img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .65s ease; }
+        .gi:first-child img { min-height: 444px; }
+        .gi:hover img { transform: scale(1.05); }
+        .gi-film {
+            position: absolute; inset: 0; background: rgba(6,10,20,0); transition: background .35s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .gi:hover .gi-film { background: rgba(6,10,20,.44); }
+        .gi-lbl { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--wh); opacity: 0; transition: opacity .3s; }
+        .gi:hover .gi-lbl { opacity: 1; }
+
+        /* ── CTA ── */
+        .cta { padding: 120px 0; text-align: center; border-top: 1px solid var(--dim); }
+        .cta-h {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 5vw, 4.2rem);
+            font-weight: 700; line-height: 1; letter-spacing: -.03em; margin-bottom: 12px;
+        }
+        .cta-h em { font-style: italic; color: var(--cyan); }
+        .cta-sub { font-size: .82rem; color: var(--gr); margin-bottom: 40px; }
+        .cta-form { display: flex; max-width: 440px; margin: 0 auto; }
+        .cta-in {
+            flex: 1; background: rgba(255,255,255,.04); border: 1px solid var(--dim2); border-right: none;
+            padding: 13px 20px; color: var(--wh); font-family: 'Inter', sans-serif; font-size: .82rem;
+            outline: none; transition: border-color .3s;
+        }
+        .cta-in:focus { border-color: var(--cyan); }
+        .cta-in::placeholder { color: var(--gr); }
+        .cta-send {
+            background: var(--cyan); border: 1px solid var(--cyan);
+            color: var(--bg); padding: 13px 26px;
+            font-family: 'Inter', sans-serif; font-size: .67rem;
+            font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+            cursor: none; transition: background .25s;
+        }
+        .cta-send:hover { background: #26D0E8; }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 44px 52px 32px;
+            border-top: 1px solid var(--dim);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .f-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem; font-weight: 700; letter-spacing: .12em;
+            color: var(--wh); text-decoration: none;
+        }
+        .f-logo b { color: var(--cyan); }
+        .f-links { display: flex; gap: 24px; list-style: none; }
+        .f-links a {
+            font-size: .65rem; letter-spacing: .15em; text-transform: uppercase;
+            color: var(--gr); text-decoration: none; transition: color .25s; cursor: none;
+        }
+        .f-links a:hover { color: var(--wh); }
+        .f-copy { font-size: .65rem; color: var(--dim2); }
+
+        /* ── KEYFRAMES ── */
+        @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .ed-grid, .story-grid { grid-template-columns: 1fr; gap: 44px; }
+            .stats-g  { grid-template-columns: repeat(2,1fr); }
+            .cards-g  { grid-template-columns: 1fr 1fr; }
+            .gal-g    { grid-template-columns: 1fr 1fr; }
+            .gi:first-child { grid-row: auto; }
+            .story-aside { position: static; }
+        }
+        @media (max-width: 768px) {
+            nav, nav.s  { padding: 16px 22px; }
+            .nav-ul     { display: none; }
+            .hero, .w   { padding: 0 22px; }
+            .hero       { padding-bottom: 60px; }
+            .hero-foot  { flex-direction: column; align-items: flex-start; gap: 24px; }
+            .hero-btns  { flex-direction: column; }
+            .cards-g    { grid-template-columns: 1fr; }
+            .gal-g      { grid-template-columns: 1fr; }
+            .cta-form   { flex-direction: column; }
+            .cta-in     { border-right: 1px solid var(--dim2); border-bottom: none; }
+            footer      { flex-direction: column; gap: 20px; text-align: center; }
+            .f-links    { flex-wrap: wrap; justify-content: center; }
+            .earth      { height: 340px; }
+            .earth-tx   { padding: 0 28px; }
+            .film-item  { width: 260px; height: 180px; }
+            .film-head  { padding: 0 22px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="prog"></div>
+<div id="cur"></div>
+<div id="cur-r"></div>
+<canvas id="stars"></canvas>
+
+<!-- NAV -->
+<nav id="nav">
+    <a href="#" class="logo">ABYSS<b>AL</b></a>
+    <ul class="nav-ul">
+        <li><a href="#discover">Discover</a></li>
+        <li><a href="#story">Our Story</a></li>
+        <li><a href="#expeditions">Expeditions</a></li>
+        <li><a href="#earth">Cosmos</a></li>
+        <li><a href="#gallery">Archive</a></li>
+    </ul>
+    <a href="#contact" class="nav-btn">Join Expedition</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-media">
+        <video id="hero-vid" autoplay muted loop playsinline preload="auto"
+               poster="https://images.unsplash.com/photo-1698472505070-6d3b90afb530?w=1920&q=80">
+            <source src="https://videos.pexels.com/video-files/2556894/2556894-hd_1920_1080_25fps.mp4" type="video/mp4">
+        </video>
+        <img id="hero-img" src="https://images.unsplash.com/photo-1698472505070-6d3b90afb530?w=1920&q=85" alt="Humpback whale in the deep ocean">
+    </div>
+    <div class="hero-tag">Deep Ocean Exploration</div>
+    <h1 class="hero-h">
+        Where the<br><em>Deep</em><br>Begins
+    </h1>
+    <div class="hero-foot">
+        <p class="hero-p">
+            Venturing into Earth's final unexplored frontier — the abyssal depths that connect our oceans to the stars above.
+        </p>
+        <div class="hero-btns">
+            <a href="#discover" class="btn-f">Explore Now</a>
+            <a href="#story" class="btn-o">Our Story</a>
+        </div>
+    </div>
+    <div class="scroll-hint">
+        <div class="s-bar"></div>
+        <span>Scroll</span>
+    </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq-wrap">
+    <div class="mq-track" aria-hidden="true">
+        <div class="mq-item"><span class="dot"></span>Depth 11,034m</div>
+        <div class="mq-item"><span class="dot"></span>Species 228,000</div>
+        <div class="mq-item"><span class="dot"></span>Expeditions 47</div>
+        <div class="mq-item"><span class="dot"></span>Ocean Coverage 71%</div>
+        <div class="mq-item"><span class="dot"></span>Unexplored 95%</div>
+        <div class="mq-item"><span class="dot"></span>Pressure 1,100 Bar</div>
+        <div class="mq-item"><span class="dot"></span>Discovery 2026</div>
+        <div class="mq-item"><span class="dot"></span>Depth 11,034m</div>
+        <div class="mq-item"><span class="dot"></span>Species 228,000</div>
+        <div class="mq-item"><span class="dot"></span>Expeditions 47</div>
+        <div class="mq-item"><span class="dot"></span>Ocean Coverage 71%</div>
+        <div class="mq-item"><span class="dot"></span>Unexplored 95%</div>
+        <div class="mq-item"><span class="dot"></span>Pressure 1,100 Bar</div>
+        <div class="mq-item"><span class="dot"></span>Discovery 2026</div>
+    </div>
+</div>
+
+<!-- EDITORIAL 1 -->
+<section class="ed" id="discover">
+    <div class="w">
+        <div class="ed-grid">
+            <div class="ph r" id="ph1">
+                <img src="https://images.unsplash.com/photo-1502209524164-acea936639a2?w=1000&q=85" alt="Deep Blue — cinematic underwater diver">
+                <div class="ph-shade"></div>
+                <div class="ph-badge">01 / Deep Blue</div>
+            </div>
+            <div>
+                <div class="lbl r d1">01 — Origins</div>
+                <h2 class="ed-h r d2">Born from the<br><em>same darkness</em><br>as the stars</h2>
+                <p class="ed-p r d3">The ocean floor and the cosmos share more than darkness — they share mystery. In the deepest trenches, where sunlight has never reached, life finds a way. Just as it does across the billion galaxies we have yet to explore.</p>
+                <blockquote class="bq r d3">"We know more about the surface of Mars than we do about our own ocean floor."</blockquote>
+                <p class="ed-p r d4">ABYSSAL exists at this intersection — between the impossibly deep and the impossibly vast. Our expeditions push the boundary of what is known.</p>
+                <a href="#story" class="il r d4">
+                    Read Our Story
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow"></div>
+
+<!-- EDITORIAL 2 -->
+<section class="ed">
+    <div class="w">
+        <div class="ed-grid">
+            <div>
+                <div class="lbl r d1">02 — Discovery</div>
+                <h2 class="ed-h r d2">Ancient giants of<br>the <em>silent deep</em></h2>
+                <p class="ed-p r d3">Humpback whales navigate 25,000 kilometers of open ocean each year using a biological GPS we still don't fully understand. Their songs travel farther than any human signal we've ever built.</p>
+                <p class="ed-p r d4">These leviathans have outlasted ice ages, mass extinctions, and five hundred million years of geological upheaval. They are living records of our planet's deepest history.</p>
+                <a href="#" class="il r d4">
+                    Explore the Species
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+            <div class="ph r" id="ph2">
+                <img src="https://images.unsplash.com/photo-1698551007683-7226dc6f4e85?w=1000&q=85" alt="Humpback whale beneath the ocean surface">
+                <div class="ph-shade"></div>
+                <div class="ph-badge">02 / The Giants</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="glow"></div>
+
+<!-- EDITORIAL 3 -->
+<section class="ed">
+    <div class="w">
+        <div class="ed-grid">
+            <div class="ph r" id="ph3">
+                <img src="https://images.unsplash.com/photo-1464802686167-b939a6910659?w=1000&q=85" alt="Galaxy and stars in deep space">
+                <div class="ph-shade"></div>
+                <div class="ph-badge">03 / The Cosmos</div>
+            </div>
+            <div>
+                <div class="lbl r d1">03 — Cosmos</div>
+                <h2 class="ed-h r d2">Two frontiers,<br>one <em>infinite</em><br>darkness</h2>
+                <p class="ed-p r d3">At 11,000 meters below sea level, the pressure is 1,100 times what you feel right now. At the edge of our observable universe, space stretches 46 billion light-years in every direction.</p>
+                <p class="ed-p r d4">Both frontiers are defined by the absence of light, the presence of the unknown, and the certainty that something extraordinary waits in the dark.</p>
+                <a href="#" class="il r d4">
+                    The Cosmos Program
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- OUR STORY -->
+<section class="story" id="story">
+    <div class="w">
+        <div class="story-grid">
+            <div class="story-aside r">
+                <div class="lbl">Our Story</div>
+                <h2 class="story-aside-h">A mission born<br>in the <em>dark</em></h2>
+                <p class="story-aside-p">
+                    ABYSSAL began not as a company, but as a question: what if the deep ocean and deep space are the same frontier — just measured in different directions?
+                </p>
+                <div class="story-year">Founded <span>2019</span> — Tokyo, Japan</div>
+            </div>
+            <div class="story-body r d1">
+                <h3 class="story-body-h">The founding question</h3>
+                <p>
+                    In 2019, marine biologist Dr. Sena Mori and astrophysicist Kenji Ishida met at a research symposium in Kyoto. Mori had spent seven years mapping hydrothermal vent ecosystems in the Mariana Trench. Ishida had spent six building adaptive optics for space telescopes. What brought them together was a shared obsession: that we were looking in the wrong direction.
+                </p>
+                <p>
+                    "We kept spending billions to scan the sky," Ishida recalls, "when the most alien biology on Earth was sitting 11 kilometres beneath our feet, completely unstudied. The ocean floor is its own universe — darker, older, and in many ways stranger than anything we've found in space."
+                </p>
+
+                <blockquote class="story-pull">"The ocean floor is its own universe — darker, older, and in many ways stranger than anything we've found in space."</blockquote>
+
+                <h3 class="story-body-h">The first dive</h3>
+                <p>
+                    Their first joint expedition in 2020 descended 6,200 metres into the Yap Trench, aboard a converted research submersible equipped with Ishida's modified deep-spectrum imaging sensors — originally designed to photograph distant galaxies, now retuned to read bioluminescent signal patterns in zero-light ocean environments.
+                </p>
+                <p>
+                    What they recovered changed both their careers. The bioluminescent communication patterns observed in a newly-catalogued cephalopod species bore a structural resemblance to the pulsar timing signals Ishida had spent years analysing. Coincidence, most said. Possibility, they replied.
+                </p>
+
+                <img class="story-img" src="https://images.unsplash.com/photo-1682686581295-7364cabf5511?w=900&q=82" alt="Deep ocean coral reef expedition">
+                <p class="story-caps">EXP-2020-01, Yap Trench, 6,200m — the first ABYSSAL dive. Photography: NEOM Archives.</p>
+
+                <h3 class="story-body-h">What we do now</h3>
+                <p>
+                    ABYSSAL now operates across three programmes: deep-sea biological survey, cross-disciplinary signal analysis, and public science communication. We partner with oceanographic institutes across Japan, Norway, and New Zealand, and maintain a fleet of four autonomous deep-sea vehicles capable of sustained operation below 8,000 metres.
+                </p>
+                <p>
+                    Our Cosmos Protocol — launched in partnership with JAXA in 2024 — extends this comparison upward, using the International Space Station as a vantage point to study Earth's ocean surface dynamics alongside atmospheric phenomena. The data feeds directly back into our deep-sea modelling work.
+                </p>
+                <p>
+                    We believe the most important discoveries of this century will not come from looking further into space, but from finally turning our attention downward — into the pressurised, lightless, ancient world that covers 71% of our planet and remains, in the most literal sense, unknown.
+                </p>
+                <a href="#expeditions" class="il" style="margin-top:8px">
+                    See Our Expeditions
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+    <div class="w">
+        <div class="stats-g">
+            <div class="stat r">
+                <div class="stat-n"><span class="c cnt" data-target="11">0</span><span class="sfx">,034m</span></div>
+                <div class="stat-l">Maximum Depth</div>
+                <div class="stat-d">Challenger Deep, Pacific Ocean</div>
+            </div>
+            <div class="stat r d1">
+                <div class="stat-n"><span class="c cnt" data-target="228">0</span><span class="sfx">K+</span></div>
+                <div class="stat-l">Known Species</div>
+                <div class="stat-d">With millions yet undiscovered</div>
+            </div>
+            <div class="stat r d2">
+                <div class="stat-n"><span class="c cnt" data-target="95">0</span><span class="sfx">%</span></div>
+                <div class="stat-l">Still Unexplored</div>
+                <div class="stat-d">Of the ocean floor remains unmapped</div>
+            </div>
+            <div class="stat r d3">
+                <div class="stat-n"><span class="c cnt" data-target="47">0</span><span class="sfx"></span></div>
+                <div class="stat-l">Expeditions</div>
+                <div class="stat-d">Deep-sea missions completed</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EXPEDITION CARDS -->
+<section class="cards" id="expeditions">
+    <div class="w">
+        <div class="sec-hd r">
+            <div>
+                <div class="lbl">Active Missions</div>
+                <h2 class="sec-t">Current Expeditions</h2>
+            </div>
+            <a href="#" class="il">View All <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="cards-g">
+            <div class="card r">
+                <img src="https://images.unsplash.com/photo-1682686581295-7364cabf5511?w=720&q=82" alt="Coral reef — NEOM expedition">
+                <div class="card-veil"></div>
+                <div class="card-bd">
+                    <div class="card-code">EXP-2026-01</div>
+                    <div class="card-name">Coral Nexus</div>
+                    <div class="card-info">NEOM Archipelago — 120m depth</div>
+                    <a href="#" class="card-go">Explore <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                </div>
+            </div>
+            <div class="card r d1">
+                <img src="https://images.unsplash.com/photo-1698472505070-6d3b90afb530?w=720&q=82" alt="Whale migration tracking">
+                <div class="card-veil"></div>
+                <div class="card-bd">
+                    <div class="card-code">EXP-2026-02</div>
+                    <div class="card-name">Leviathan Track</div>
+                    <div class="card-info">Pacific Migration Route — Surface</div>
+                    <a href="#" class="card-go">Explore <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                </div>
+            </div>
+            <div class="card r d2">
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=720&q=82" alt="Cosmos protocol space mission">
+                <div class="card-veil"></div>
+                <div class="card-bd">
+                    <div class="card-code">EXP-2026-03</div>
+                    <div class="card-name">Cosmos Protocol</div>
+                    <div class="card-info">ISS Partnership — Orbital Research</div>
+                    <a href="#" class="card-go">Explore <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FILMSTRIP -->
+<section class="film">
+    <div class="film-head r">
+        <div>
+            <div class="lbl">Visual Journal</div>
+            <h2 class="sec-t">From the Field</h2>
+        </div>
+        <div class="film-hint">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Drag to explore
+        </div>
+    </div>
+    <div class="film-scroll-wrap">
+        <div class="film-track" id="filmTrack">
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1698472505070-6d3b90afb530?w=680&q=80" alt="Whale, Pacific">
+                <div class="film-veil"><span class="film-cap">Pacific Ocean, 2026</span></div>
+            </div>
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1502209524164-acea936639a2?w=680&q=80" alt="Deep Blue diver">
+                <div class="film-veil"><span class="film-cap">Deep Blue, 340m</span></div>
+            </div>
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=680&q=80" alt="Outer space">
+                <div class="film-veil"><span class="film-cap">ISS Observation</span></div>
+            </div>
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1698551007683-7226dc6f4e85?w=680&q=80" alt="Whale beneath surface">
+                <div class="film-veil"><span class="film-cap">Humpback, Tonga</span></div>
+            </div>
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1464802686167-b939a6910659?w=680&q=80" alt="Galaxy">
+                <div class="film-veil"><span class="film-cap">Milky Way Survey</span></div>
+            </div>
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1682686581295-7364cabf5511?w=680&q=80" alt="Coral reef">
+                <div class="film-veil"><span class="film-cap">NEOM Reef, 120m</span></div>
+            </div>
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1628498188904-036f5e25e93e?w=680&q=80" alt="Nebula">
+                <div class="film-veil"><span class="film-cap">Nebula M42</span></div>
+            </div>
+            <div class="film-item">
+                <img src="https://images.unsplash.com/photo-1698334846759-2cdc3352dd85?w=680&q=80" alt="Whale swimming">
+                <div class="film-veil"><span class="film-cap">Whale Song Study</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3D EARTH -->
+<section class="earth" id="earth">
+    <iframe src="https://my.spline.design/planetearthdaycopy-2333a6dda7fecbc7779226b36abe6285/"
+            title="Interactive 3D Earth" loading="lazy" allowfullscreen></iframe>
+    <div class="earth-veil">
+        <div class="earth-tx">
+            <div class="lbl r">04 — Above</div>
+            <h2 class="earth-h r d1">Our world<br>from <em>above</em></h2>
+            <p class="earth-p r d2">From the International Space Station, Earth appears as a blue marble against infinite black. From the ocean floor, that same sky is a distant memory.</p>
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+    <div class="w">
+        <div class="sec-hd r">
+            <div>
+                <div class="lbl">Visual Archive</div>
+                <h2 class="sec-t">Field Photography</h2>
+            </div>
+        </div>
+        <div class="gal-g">
+            <div class="gi r">
+                <img src="https://images.unsplash.com/photo-1698334846759-2cdc3352dd85?w=900&q=85" alt="Whale, Pacific 2026">
+                <div class="gi-film"><span class="gi-lbl">Pacific, 2026</span></div>
+            </div>
+            <div class="gi r d1">
+                <img src="https://images.unsplash.com/photo-1502209524164-acea936639a2?w=560&q=82" alt="Deep Blue diver">
+                <div class="gi-film"><span class="gi-lbl">Deep Blue</span></div>
+            </div>
+            <div class="gi r d2">
+                <img src="https://images.unsplash.com/photo-1628498188904-036f5e25e93e?w=560&q=82" alt="Galaxy nebula">
+                <div class="gi-film"><span class="gi-lbl">Nebula M42</span></div>
+            </div>
+            <div class="gi r d1">
+                <img src="https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=560&q=82" alt="Milky Way">
+                <div class="gi-film"><span class="gi-lbl">Milky Way</span></div>
+            </div>
+            <div class="gi r d2">
+                <img src="https://images.unsplash.com/photo-1682686581295-7364cabf5511?w=560&q=82" alt="NEOM coral reef">
+                <div class="gi-film"><span class="gi-lbl">NEOM Reef</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+    <div class="w">
+        <div class="lbl r" style="justify-content:center;margin-bottom:16px;"><span>Join the Expedition</span></div>
+        <h2 class="cta-h r">Dive into the<br><em>unknown</em></h2>
+        <p class="cta-sub r d1">Updates from the field — discoveries, expedition logs, and first access.</p>
+        <div class="cta-form r d2">
+            <input type="email" class="cta-in" placeholder="Your email address">
+            <button type="submit" class="cta-send">Join Now</button>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <a href="#" class="f-logo">ABYSS<b>AL</b></a>
+    <ul class="f-links">
+        <li><a href="#story">About</a></li>
+        <li><a href="#expeditions">Expeditions</a></li>
+        <li><a href="#">Research</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <p class="f-copy">© 2026 ABYSSAL. All rights reserved.</p>
+</footer>
+
+<script>
+/* ── SCROLL PROGRESS ── */
+const prog = document.getElementById('prog');
+window.addEventListener('scroll', () => {
+    const pct = scrollY / (document.body.scrollHeight - innerHeight) * 100;
+    prog.style.width = pct + '%';
+}, { passive: true });
+
+/* ── CURSOR ── */
+const cur  = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cur.style.left = mx+'px'; cur.style.top = my+'px';
+});
+(function animR() {
+    rx += (mx-rx)*.1; ry += (my-ry)*.1;
+    curR.style.left = rx+'px'; curR.style.top = ry+'px';
+    requestAnimationFrame(animR);
+})();
+document.querySelectorAll('a, button, .card, .gi, .ph, .film-item').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hov'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hov'));
+});
+
+/* ── HERO VIDEO FALLBACK ── */
+const vid = document.getElementById('hero-vid');
+const himg = document.getElementById('hero-img');
+if (vid) {
+    vid.addEventListener('error', () => { vid.style.display='none'; himg.style.display='block'; });
+    vid.addEventListener('loadeddata', () => { himg.style.display='none'; });
+}
+
+/* ── STARS ── */
+const cvs = document.getElementById('stars');
+const ctx = cvs.getContext('2d');
+function rsz() { cvs.width = innerWidth; cvs.height = innerHeight; }
+rsz(); window.addEventListener('resize', rsz);
+const SZ = Array.from({length:180}, ()=>({
+    x: Math.random()*innerWidth,
+    y: Math.random()*innerHeight,
+    r: Math.random()*1.0+.1,
+    o: Math.random()*.45+.08,
+    vx:(Math.random()-.5)*.035,
+    vy:(Math.random()-.5)*.035,
+    t: Math.random()*Math.PI*2,
+    ts:Math.random()*.016+.004
+}));
+(function tick() {
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+    SZ.forEach(s=>{
+        s.x+=s.vx; s.y+=s.vy; s.t+=s.ts;
+        if(s.x<0) s.x=cvs.width;
+        if(s.x>cvs.width) s.x=0;
+        if(s.y<0) s.y=cvs.height;
+        if(s.y>cvs.height) s.y=0;
+        const a = s.o*(.5+.5*Math.sin(s.t));
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(150,200,255,${a})`; ctx.fill();
+    });
+    requestAnimationFrame(tick);
+})();
+
+/* ── NAV ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', ()=> nav.classList.toggle('s', scrollY>60), {passive:true});
+
+/* ── REVEAL ── */
+const robs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); });
+}, { threshold:.1, rootMargin:'0px 0px -44px 0px' });
+document.querySelectorAll('.r').forEach(el => robs.observe(el));
+
+/* ── COUNTERS ── */
+const cobs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if(!e.isIntersecting) return;
+        const el = e.target, end = +el.dataset.target, t0 = performance.now(), dur = 1700;
+        (function f(now) {
+            const p = Math.min((now-t0)/dur,1), ease = 1-Math.pow(1-p,3);
+            el.textContent = Math.round(ease*end);
+            if(p<1) requestAnimationFrame(f);
+        })(performance.now());
+        cobs.unobserve(el);
+    });
+}, { threshold:.5 });
+document.querySelectorAll('.cnt').forEach(el => cobs.observe(el));
+
+/* ── HERO PARALLAX (scroll + mouse) ── */
+const heroVid = document.getElementById('hero-vid');
+const heroImg = document.getElementById('hero-img');
+let heroEl = heroVid && heroVid.style.display !== 'none' ? heroVid : heroImg;
+let pmx=0, pmy=0, pmtx=0, pmty=0;
+document.addEventListener('mousemove', e => {
+    pmx = (e.clientX/innerWidth-.5)*14;
+    pmy = (e.clientY/innerHeight-.5)*10;
+});
+window.addEventListener('scroll', ()=>{
+    if(scrollY < innerHeight) {
+        const el = document.getElementById('hero-vid');
+        const im = document.getElementById('hero-img');
+        const active = (el && el.style.display!=='none') ? el : im;
+        if(active) active.style.transform = `translateY(${scrollY*.26}px) translate(${pmtx}px,${pmty}px)`;
+    }
+}, {passive:true});
+(function animParallax() {
+    pmtx += (pmx-pmtx)*.06;
+    pmty += (pmy-pmty)*.06;
+    heroEl = document.getElementById('hero-vid');
+    const im2 = document.getElementById('hero-img');
+    const active2 = (heroEl && heroEl.style.display!=='none') ? heroEl : im2;
+    if(active2 && scrollY < innerHeight) {
+        active2.style.transform = `translateY(${scrollY*.26}px) translate(${pmtx}px,${pmty}px)`;
+    }
+    requestAnimationFrame(animParallax);
+})();
+
+/* ── EDITORIAL PHOTO MOUSE PARALLAX ── */
+['ph1','ph2','ph3'].forEach(id => {
+    const wrap = document.getElementById(id);
+    if(!wrap) return;
+    const img = wrap.querySelector('img');
+    wrap.addEventListener('mousemove', e => {
+        const r = wrap.getBoundingClientRect();
+        const ox = ((e.clientX-r.left)/r.width-.5)*16;
+        const oy = ((e.clientY-r.top)/r.height-.5)*12;
+        img.style.transition = 'transform .1s ease';
+        img.style.transform  = `scale(1.06) translate(${ox}px,${oy}px)`;
+    });
+    wrap.addEventListener('mouseleave', () => {
+        img.style.transition = 'transform .85s cubic-bezier(.16,1,.3,1)';
+        img.style.transform  = '';
+    });
+});
+
+/* ── FILMSTRIP DRAG SCROLL ── */
+const track = document.getElementById('filmTrack');
+let isDown=false, startX=0, scrollLeft=0;
+let velX=0, lastX=0, momentum=false;
+
+track.addEventListener('mousedown', e => {
+    isDown=true; track.style.transition='none';
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track._x||0;
+    lastX = e.pageX; velX=0;
+});
+document.addEventListener('mouseup', ()=>{
+    if(!isDown) return;
+    isDown=false;
+    if(Math.abs(velX)>1) {
+        let v = velX*10;
+        (function coast() {
+            v *= .92;
+            track._x = (track._x||0) + v;
+            track._x = Math.max(Math.min(track._x,0), -(track.scrollWidth-track.parentElement.offsetWidth)-60);
+            track.style.transform = `translateX(${track._x}px)`;
+            if(Math.abs(v)>0.5) requestAnimationFrame(coast);
+        })();
+    }
+});
+document.addEventListener('mousemove', e => {
+    if(!isDown) return;
+    e.preventDefault();
+    velX = e.pageX - lastX; lastX = e.pageX;
+    const x = e.pageX - track.offsetLeft;
+    const walk = (x-startX)*1.2;
+    let next = scrollLeft+walk;
+    next = Math.max(Math.min(next,0), -(track.scrollWidth-track.parentElement.offsetWidth)-60);
+    track._x = next;
+    track.style.transform = `translateX(${next}px)`;
+});
+track.addEventListener('wheel', e => {
+    e.preventDefault();
+    let next = (track._x||0) - e.deltaY*1.2;
+    next = Math.max(Math.min(next,0), -(track.scrollWidth-track.parentElement.offsetWidth)-60);
+    track._x = next;
+    track.style.transition = 'transform .25s ease';
+    track.style.transform = `translateX(${next}px)`;
+}, {passive:false});
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+noma/backend/__pycache__/
+noma/backend/venv/
+noma/backend/*.db
+noma/.claude/
+**/__pycache__/
+*.pyc
+*.pyo

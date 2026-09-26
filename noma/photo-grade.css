@@ -1,0 +1,9 @@
+/* Unified color grade for product/lifestyle photography.
+   Source images are stock photos shot in wildly different lighting
+   (warm oak desks, neon-blue gaming rigs, daylight studio shots).
+   This pulls all of them toward one shared mood: desaturated,
+   slightly warm-neutral, filmic contrast — so the catalog reads as
+   one considered set instead of a stock-photo grab bag. */
+.ph{
+  filter: saturate(.8) sepia(.08) hue-rotate(-6deg) contrast(1.06) brightness(1.03);
+}

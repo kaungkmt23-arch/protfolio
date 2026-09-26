@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="responsive.css">
+<link rel="stylesheet" href="photo-grade.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>NXY LI — The desk, considered.</title>
+<meta name="description" content="Premium workspace accessories — keyboards, monitors, desks and chairs for people who spend their lives at a desk. Every object chosen, nothing decorative.">
+<meta property="og:title" content="NXY LI — Premium Workspace Accessories">
+<meta property="og:description" content="Keyboards, monitors, desks and chairs for people who spend their lives at a desk.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="products.js"></script>
+<script src="api.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#ECEAE4;color:#16150F;font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+::selection{background:#3F5D8C;color:#F4F2EC}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes floatY2{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.rv,.hu{transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.rv.armed,.hu.armed{opacity:0;transform:translateY(24px)}
+.rv.armed.in,.hu.armed.in{opacity:1;transform:none}
+.cartScroll::-webkit-scrollbar{width:4px}
+.cartScroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14)}
+</style>
+</helmet>
+
+<div style="position:relative">
+
+  <!-- ====================== NAV ====================== -->
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;height:68px;padding:0 clamp(20px,4vw,52px);display:flex;align-items:center;justify-content:space-between;transition:background .4s,box-shadow .4s,border-color .4s;border-bottom:1px solid {{ navBorder }};background:{{ navBg }};backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)">
+    <a href="index.html" style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;letter-spacing:.04em">NXY LI</a>
+    <div class="nav-links" style="display:flex;gap:32px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase">
+      <a href="collection.html" style="transition:color .2s" style-hover="color:#3F5D8C">Shop</a>
+      <a href="collection.html" style="transition:color .2s" style-hover="color:#3F5D8C">Collections</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px">
+      <a href="collection.html" aria-label="Search" style="color:#16150F;display:flex;padding:4px;transition:color .2s" style-hover="color:#3F5D8C">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </a>
+      <a href="login.html" aria-label="Account" style="color:#16150F;display:flex;padding:4px;transition:color .2s" style-hover="color:#3F5D8C">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <button aria-label="Cart" onClick="{{ toggleCart }}" style="background:none;border:none;color:#16150F;display:flex;align-items:center;gap:7px;padding:4px;transition:color .2s" style-hover="color:#3F5D8C">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;min-width:14px">{{ cartCount }}</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ====================== HERO ====================== -->
+  <section style="position:relative;padding:140px clamp(20px,4vw,52px) 56px;background:linear-gradient(180deg,#F1EFE9 0%,#ECEAE4 60%,#E7E4DC 100%);overflow:hidden">
+    <div class="hero-grid" style="max-width:1340px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;min-height:64vh">
+      <div>
+        <div class="hu" style="transition-delay:.05s;display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#3F5D8C;margin-bottom:26px">
+          <span style="width:26px;height:1px;background:#3F5D8C"></span>Premium Workspace — Est. 2026
+        </div>
+        <h1 class="hu" style="transition-delay:.13s;font-family:'Newsreader',serif;font-weight:500;font-size:clamp(46px,6.4vw,92px);line-height:.93;letter-spacing:-.025em;margin-bottom:26px">The desk,<br><span style="font-style:italic;font-weight:400;color:#3F5D8C">considered.</span></h1>
+        <p class="hu" style="transition-delay:.22s;font-size:16px;line-height:1.7;color:#56534B;max-width:400px;margin-bottom:36px">Keyboards, monitors, desks and chairs for people who spend their lives at a desk. Every object chosen — nothing decorative.</p>
+        <div class="hu" style="transition-delay:.3s;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+          <a href="collection.html" style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:#16150F;color:#F4F2EC;padding:16px 32px;border-radius:40px;transition:transform .25s cubic-bezier(.16,1,.3,1),background .25s" style-hover="transform:translateY(-3px);background:#3F5D8C">Explore the collection →</a>
+          <a href="#featured" style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#16150F;border-bottom:1px solid #16150F;padding-bottom:3px">Most wanted</a>
+        </div>
+        <div class="hu" style="transition-delay:.38s;display:flex;gap:34px;margin-top:52px">
+          <div><div style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">12k+</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8A877E;margin-top:2px">Desks built</div></div>
+          <div style="width:1px;background:rgba(0,0,0,.12)"></div>
+          <div><div style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">4.9</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8A877E;margin-top:2px">Avg. rating</div></div>
+          <div style="width:1px;background:rgba(0,0,0,.12)"></div>
+          <div><div style="font-family:'Newsreader',serif;font-size:30px;font-weight:500">5yr</div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8A877E;margin-top:2px">Guarantee</div></div>
+        </div>
+      </div>
+
+      <!-- floating hero composition -->
+      <div style="position:relative;height:520px">
+        <div style="position:absolute;right:0;top:18px;width:78%;aspect-ratio:4/5;border-radius:26px;overflow:hidden;background:#E1DED5;box-shadow:0 40px 80px -30px rgba(0,0,0,.45);animation:floatY 7s ease-in-out infinite">
+          <img class="ph" data-src="{{ heroMain }}" alt="NXY LI workspace" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div style="position:absolute;left:0;bottom:24px;width:46%;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:#E1DED5;box-shadow:0 30px 60px -24px rgba(0,0,0,.4);animation:floatY2 6s ease-in-out infinite">
+          <img class="ph" data-src="{{ heroChip }}" alt="NXY LI keyboard" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <div style="position:absolute;left:6%;top:6px;background:#F4F2EC;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:13px 16px;box-shadow:0 18px 40px -20px rgba(0,0,0,.3);animation:floatY2 8s ease-in-out infinite">
+          <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A877E">In stock</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-top:3px"><span style="width:7px;height:7px;border-radius:50%;background:#5C8A5E;animation:blink 1.8s infinite"></span><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700">Ships today</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== TICKER ====================== -->
+  <div style="overflow:hidden;border-top:1px solid rgba(0,0,0,.10);border-bottom:1px solid rgba(0,0,0,.10);background:#E7E4DC;white-space:nowrap">
+    <div style="display:inline-block;animation:marq 32s linear infinite;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#56534B;padding:13px 0">
+      <span style="padding:0 26px">Free shipping over ¥15,000</span><span style="color:#3F5D8C;padding:0 8px">✦</span><span style="padding:0 26px">5-year guarantee</span><span style="color:#3F5D8C;padding:0 8px">✦</span><span style="padding:0 26px">30-day returns</span><span style="color:#3F5D8C;padding:0 8px">✦</span><span style="padding:0 26px">Carbon-neutral delivery</span><span style="color:#3F5D8C;padding:0 8px">✦</span><span style="padding:0 26px">Free shipping over ¥15,000</span><span style="color:#3F5D8C;padding:0 8px">✦</span><span style="padding:0 26px">5-year guarantee</span><span style="color:#3F5D8C;padding:0 8px">✦</span><span style="padding:0 26px">30-day returns</span><span style="color:#3F5D8C;padding:0 8px">✦</span><span style="padding:0 26px">Carbon-neutral delivery</span><span style="color:#3F5D8C;padding:0 8px">✦</span>
+    </div>
+  </div>
+
+  <!-- ====================== CATEGORY RAIL ====================== -->
+  <section style="padding:78px clamp(20px,4vw,52px) 30px;max-width:1340px;margin:0 auto">
+    <div class="rv" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:30px">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#3F5D8C;margin-bottom:10px">Browse</div>
+        <h2 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em">Shop by category</h2>
+      </div>
+      <a href="collection.html" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#56534B;display:flex;align-items:center;gap:8px;transition:color .2s" style-hover="color:#3F5D8C">All products →</a>
+    </div>
+    <div class="cat-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px">
+      <sc-for list="{{ categories }}" as="c" hint-placeholder-count="0">
+        <a href="{{ c.href }}" class="rv" style="display:block;cursor:pointer">
+          <div style="aspect-ratio:3/4;border-radius:16px;overflow:hidden;background:#E1DED5;position:relative;box-shadow:0 10px 26px -16px rgba(0,0,0,.3);transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s" style-hover="transform:translateY(-7px);box-shadow:0 22px 40px -18px rgba(0,0,0,.42)">
+            <img class="ph" data-src="{{ c.img }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(12,11,8,.66) 0%,rgba(12,11,8,.05) 55%)"></div>
+            <div style="position:absolute;left:13px;right:13px;bottom:13px">
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:#F4F2EC;letter-spacing:.01em">{{ c.name }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:rgba(244,242,236,.7);margin-top:2px">{{ c.count }} items</div>
+            </div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ====================== FEATURED ====================== -->
+  <section id="featured" style="padding:56px clamp(20px,4vw,52px) 70px;max-width:1340px;margin:0 auto">
+    <div class="rv" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:34px">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#3F5D8C;margin-bottom:10px">Editor's selection</div>
+        <h2 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(30px,3.8vw,46px);letter-spacing:-.02em">Most wanted</h2>
+      </div>
+      <a href="collection.html" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#56534B;display:flex;align-items:center;gap:8px;transition:color .2s" style-hover="color:#3F5D8C">View all →</a>
+    </div>
+    <div class="prod-grid-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px">
+      <sc-for list="{{ featured }}" as="p" hint-placeholder-count="0">
+        <a href="{{ p.href }}" class="rv" style="display:block">
+          <div style="aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#E1DED5;position:relative;box-shadow:0 12px 30px -18px rgba(0,0,0,.32);transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s" style-hover="transform:translateY(-8px);box-shadow:0 26px 46px -20px rgba(0,0,0,.45)">
+            <img class="ph" data-src="{{ p.img }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.16,1,.3,1)" style-hover="transform:scale(1.07)">
+            <sc-if value="{{ p.badge }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute;top:13px;left:13px;font-family:'Space Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:#3F5D8C;color:#F4F2EC;padding:4px 9px;border-radius:20px">{{ p.badge }}</span>
+            </sc-if>
+            <button onClick="{{ p.onAdd }}" aria-label="Add to cart" style="position:absolute;bottom:13px;right:13px;width:40px;height:40px;border-radius:50%;border:none;background:#F4F2EC;color:#16150F;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -6px rgba(0,0,0,.4);transition:transform .2s,background .2s,color .2s" style-hover="transform:scale(1.12);background:#3F5D8C;color:#F4F2EC">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <div style="padding:15px 2px 0;display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#3F5D8C;margin-bottom:5px">{{ p.cat }}</div>
+              <div style="font-family:'Newsreader',serif;font-size:19px;font-weight:500;line-height:1.15">{{ p.name }}</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-size:13px;color:#16150F;white-space:nowrap">{{ p.priceLabel }}</div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ====================== EDITORIAL ====================== -->
+  <section class="rv" style="position:relative;margin:0 clamp(20px,4vw,52px);border-radius:24px;overflow:hidden;min-height:480px;display:flex;align-items:center">
+    <img class="ph" data-src="{{ editorialImg }}" alt="Complete workspace" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(12,11,8,.86) 0%,rgba(12,11,8,.5) 46%,rgba(12,11,8,.12) 100%)"></div>
+    <div style="position:relative;padding:clamp(28px,5vw,64px);max-width:560px;color:#F4F2EC">
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#9DB4D6;margin-bottom:18px">The complete setup</div>
+      <h2 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(30px,4.4vw,52px);line-height:1.02;letter-spacing:-.02em;margin-bottom:20px">Everything you need.<br><span style="font-style:italic;color:#9DB4D6">Nothing you don't.</span></h2>
+      <p style="font-size:15px;line-height:1.75;color:rgba(244,242,236,.78);max-width:400px;margin-bottom:32px">Every NXY LI product is designed to work as part of one unified workspace — individual pieces that quietly belong together.</p>
+      <a href="collection.html" style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:#F4F2EC;color:#16150F;padding:15px 30px;border-radius:40px;display:inline-block;transition:transform .25s cubic-bezier(.16,1,.3,1)" style-hover="transform:translateY(-3px)">Build your setup →</a>
+    </div>
+  </section>
+
+  <!-- ====================== NEW ARRIVALS ====================== -->
+  <section style="padding:76px clamp(20px,4vw,52px) 70px;max-width:1340px;margin:0 auto">
+    <div class="rv" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:34px">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#3F5D8C;margin-bottom:10px">Just landed</div>
+        <h2 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(30px,3.8vw,46px);letter-spacing:-.02em">New arrivals</h2>
+      </div>
+      <a href="collection.html" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#56534B;display:flex;align-items:center;gap:8px;transition:color .2s" style-hover="color:#3F5D8C">View all →</a>
+    </div>
+    <div class="prod-grid-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px">
+      <sc-for list="{{ arrivals }}" as="p" hint-placeholder-count="0">
+        <a href="{{ p.href }}" class="rv" style="display:block">
+          <div style="aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#E1DED5;position:relative;box-shadow:0 12px 30px -18px rgba(0,0,0,.32);transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s" style-hover="transform:translateY(-8px);box-shadow:0 26px 46px -20px rgba(0,0,0,.45)">
+            <img class="ph" data-src="{{ p.img }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.16,1,.3,1)" style-hover="transform:scale(1.07)">
+            <button onClick="{{ p.onAdd }}" aria-label="Add to cart" style="position:absolute;bottom:13px;right:13px;width:40px;height:40px;border-radius:50%;border:none;background:#F4F2EC;color:#16150F;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -6px rgba(0,0,0,.4);transition:transform .2s,background .2s,color .2s" style-hover="transform:scale(1.12);background:#3F5D8C;color:#F4F2EC">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <div style="padding:15px 2px 0;display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#3F5D8C;margin-bottom:5px">{{ p.cat }}</div>
+              <div style="font-family:'Newsreader',serif;font-size:19px;font-weight:500;line-height:1.15">{{ p.name }}</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-size:13px;white-space:nowrap">{{ p.priceLabel }}</div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ====================== FEATURES ====================== -->
+  <section style="background:#E7E4DC;border-top:1px solid rgba(0,0,0,.10);border-bottom:1px solid rgba(0,0,0,.10)">
+    <div style="max-width:1340px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)">
+      <div class="rv" style="padding:54px clamp(22px,3vw,44px);border-right:1px solid rgba(0,0,0,.10)">
+        <div style="width:46px;height:46px;border-radius:12px;background:rgba(63,93,140,.10);display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:#3F5D8C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3 style="font-family:'Newsreader',serif;font-size:21px;font-weight:500;margin-bottom:10px">Precision engineered</h3>
+        <p style="font-size:14px;line-height:1.75;color:#6E6B62;max-width:300px">Tolerances held to 0.01mm. Materials chosen for tactile quality, built to outlast the desk they sit on.</p>
+      </div>
+      <div class="rv" style="padding:54px clamp(22px,3vw,44px);border-right:1px solid rgba(0,0,0,.10)">
+        <div style="width:46px;height:46px;border-radius:12px;background:rgba(63,93,140,.10);display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:#3F5D8C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+        <h3 style="font-family:'Newsreader',serif;font-size:21px;font-weight:500;margin-bottom:10px">Ergonomically certified</h3>
+        <p style="font-size:14px;line-height:1.75;color:#6E6B62;max-width:300px">Tested with occupational-health specialists. Designed for the 8-hour day, not the 30-minute demo.</p>
+      </div>
+      <div class="rv" style="padding:54px clamp(22px,3vw,44px)">
+        <div style="width:46px;height:46px;border-radius:12px;background:rgba(63,93,140,.10);display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:#3F5D8C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <h3 style="font-family:'Newsreader',serif;font-size:21px;font-weight:500;margin-bottom:10px">5-year guarantee</h3>
+        <p style="font-size:14px;line-height:1.75;color:#6E6B62;max-width:300px">Breaks under normal use, we fix or replace it. No questions. Confidence shouldn't cost extra.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== NEWSLETTER ====================== -->
+  <section style="background:#14130F;padding:96px clamp(20px,4vw,52px);text-align:center">
+    <div class="rv" style="max-width:560px;margin:0 auto">
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#9DB4D6;margin-bottom:16px">Workspace intelligence</div>
+      <h2 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(30px,4vw,48px);letter-spacing:-.02em;color:#F4F2EC;margin-bottom:12px">Stay in the loop</h2>
+      <p style="font-size:15px;color:#8C887E;margin-bottom:34px">New releases, setup guides and workspace inspiration — monthly, never spam.</p>
+      <form onSubmit="{{ onSubscribe }}" style="display:flex;max-width:440px;margin:0 auto;gap:0">
+        <input type="email" placeholder="your@email.com" required style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-right:none;border-radius:40px 0 0 40px;padding:15px 24px;color:#F4F2EC;font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none">
+        <button type="submit" style="background:#3F5D8C;border:none;color:#F4F2EC;padding:15px 30px;border-radius:0 40px 40px 0;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;transition:background .2s" style-hover="background:#4d6fa5">{{ subscribeLabel }}</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ====================== FOOTER ====================== -->
+  <footer style="background:#14130F;color:#8C887E;padding:62px clamp(20px,4vw,52px) 40px;border-top:1px solid rgba(255,255,255,.06)">
+    <div class="footer-grid" style="max-width:1340px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:44px;margin-bottom:48px">
+      <div>
+        <div style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;letter-spacing:.04em;color:#F4F2EC;margin-bottom:16px">NXY LI</div>
+        <p style="font-size:14px;line-height:1.75;max-width:260px">Premium workspace accessories for focused minds. Designed with intention, built to last.</p>
+      </div>
+      <div>
+        <h4 style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#9DB4D6;margin-bottom:18px">Shop</h4>
+        <div style="display:flex;flex-direction:column;gap:11px;font-size:14px">
+          <a href="collection.html" style="transition:color .2s" style-hover="color:#F4F2EC">All products</a>
+          <a href="collection.html" style="transition:color .2s" style-hover="color:#F4F2EC">Keyboards & mice</a>
+          <a href="collection.html" style="transition:color .2s" style-hover="color:#F4F2EC">Monitors</a>
+          <a href="collection.html" style="transition:color .2s" style-hover="color:#F4F2EC">Desks & seating</a>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#9DB4D6;margin-bottom:18px">Help</h4>
+        <div style="display:flex;flex-direction:column;gap:11px;font-size:14px">
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">Shipping</a>
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">Returns</a>
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">Warranty</a>
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">FAQ</a>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#9DB4D6;margin-bottom:18px">Company</h4>
+        <div style="display:flex;flex-direction:column;gap:11px;font-size:14px">
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">About</a>
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">Setup guide</a>
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">Sustainability</a>
+          <a href="#" style="transition:color .2s" style-hover="color:#F4F2EC">Press</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:1340px;margin:0 auto;padding-top:26px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em">
+      <span style="color:rgba(140,136,126,.6)">© 2026 NXY LI — All rights reserved</span>
+      <span style="color:rgba(140,136,126,.6)">Tokyo / Worldwide</span>
+    </div>
+  </footer>
+
+  <!-- ====================== CART DRAWER ====================== -->
+  <div onClick="{{ closeCart }}" style="position:fixed;inset:0;background:rgba(8,7,5,.5);z-index:300;opacity:{{ overlayOpacity }};pointer-events:{{ overlayPE }};transition:opacity .35s"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);background:#14130F;z-index:301;display:flex;flex-direction:column;transform:translateX({{ drawerX }});transition:transform .42s cubic-bezier(.23,1,.32,1);border-left:1px solid rgba(255,255,255,.07)">
+    <div style="padding:24px 28px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:'Newsreader',serif;font-size:21px;font-weight:500;color:#F4F2EC">Your cart <span style="font-family:'Space Mono',monospace;font-size:12px;color:#8C887E">({{ cartCount }})</span></div>
+      <button onClick="{{ closeCart }}" aria-label="Close" style="background:none;border:none;color:#8C887E;display:flex;padding:4px;transition:color .2s" style-hover="color:#F4F2EC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+
+    <div class="cartScroll" style="flex:1;overflow-y:auto;padding:8px 28px">
+      <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:#8C887E;text-align:center;padding:40px 0">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="opacity:.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+          <p style="font-size:14px">Your cart is empty</p>
+          <button onClick="{{ closeCart }}" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9DB4D6;background:none;border:1px solid rgba(157,180,214,.4);border-radius:30px;padding:10px 20px">Browse products</button>
+        </div>
+      </sc-if>
+      <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="0">
+        <div style="display:grid;grid-template-columns:64px 1fr auto;gap:14px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+          <img class="ph" data-src="{{ it.img }}" alt="{{ it.name }}" style="width:64px;height:64px;object-fit:cover;border-radius:10px;background:#221E18">
+          <div>
+            <div style="font-size:14px;font-weight:500;color:#F4F2EC;margin-bottom:3px">{{ it.name }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8C887E;margin-bottom:10px">{{ it.cat }}</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="display:flex;align-items:center;border:1px solid rgba(255,255,255,.14);border-radius:20px">
+                <button onClick="{{ it.onDec }}" aria-label="Decrease" style="width:26px;height:26px;background:none;border:none;color:#F4F2EC;font-size:15px;display:flex;align-items:center;justify-content:center">−</button>
+                <span style="font-family:'Space Mono',monospace;font-size:12px;color:#F4F2EC;min-width:18px;text-align:center">{{ it.qty }}</span>
+                <button onClick="{{ it.onInc }}" aria-label="Increase" style="width:26px;height:26px;background:none;border:none;color:#F4F2EC;font-size:15px;display:flex;align-items:center;justify-content:center">+</button>
+              </div>
+              <button onClick="{{ it.onRemove }}" style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#8C887E;background:none;border:none;transition:color .2s" style-hover="color:#C98A7A">Remove</button>
+            </div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:13px;color:#F4F2EC;white-space:nowrap">{{ it.lineLabel }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ cartHasItems }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:20px 28px;border-top:1px solid rgba(255,255,255,.08)">
+        <div style="height:5px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:10px">
+          <div style="height:100%;width:{{ shipPct }};background:#3F5D8C;border-radius:5px;transition:width .4s"></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.06em;color:#9DB4D6;text-align:center;margin-bottom:18px">{{ shipMsg }}</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8C887E">Subtotal</span>
+          <span style="font-family:'Newsreader',serif;font-size:24px;font-weight:500;color:#F4F2EC">{{ subtotalLabel }}</span>
+        </div>
+        <a href="checkout.html" style="display:block;text-align:center;background:#3F5D8C;color:#F4F2EC;padding:16px;border-radius:40px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .2s" style-hover="background:#4d6fa5">Proceed to checkout</a>
+        <button onClick="{{ closeCart }}" style="display:block;width:100%;text-align:center;margin-top:12px;background:none;border:none;color:#8C887E;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:color .2s" style-hover="color:#F4F2EC">Continue shopping</button>
+      </div>
+    </sc-if>
+  </aside>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.KEY = 'nxyli_cart_v2';
+    this.SHIP = 15000;
+    this.state = { cart: this.readCart(), drawer: false, scrolled: false, subscribed: false, tick: 0 };
+  }
+  readCart() {
+    try { return JSON.parse(localStorage.getItem('nxyli_cart_v2') || '[]'); } catch (e) { return []; }
+  }
+  saveCart(cart) {
+    try { localStorage.setItem(this.KEY, JSON.stringify(cart)); } catch (e) {}
+    this.setState({ cart });
+  }
+  componentDidMount() {
+    // ensure catalogue present
+    if (!(window.NXYLI_PRODUCTS && window.NXYLI_PRODUCTS.length)) {
+      setTimeout(() => this.setState({ tick: this.state.tick + 1 }), 60);
+    }
+    // scroll reveal — content is visible by default; JS arms then reveals (enhancement only)
+    if ('IntersectionObserver' in window) {
+      this._io = new IntersectionObserver((es) => {
+        es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); this._io.unobserve(e.target); } });
+      }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    }
+    requestAnimationFrame(() => this.processReveals());
+    // safety net: if anything stays armed, reveal it
+    this._fallback = setTimeout(() => {
+      document.querySelectorAll('.rv,.hu').forEach((el) => el.classList.add('in'));
+    }, 1700);
+    // nav bg on scroll
+    this._onScroll = () => {
+      const s = window.scrollY > 40;
+      if (s !== this.state.scrolled) this.setState({ scrolled: s });
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    // cross-tab sync
+    this._onStorage = (e) => { if (e.key === this.KEY) this.setState({ cart: this.readCart() }); };
+    window.addEventListener('storage', this._onStorage);
+  }
+  componentDidUpdate() { this.processReveals(); }
+  processReveals() {
+    const els = document.querySelectorAll('.rv, .hu');
+    const vh = window.innerHeight || 800;
+    els.forEach((el) => {
+      if (el._rvDone) return;
+      el._rvDone = true;
+      el.classList.add('armed');
+      const top = el.getBoundingClientRect().top;
+      if (top < vh * 0.95) {
+        requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+      } else if (this._io) {
+        this._io.observe(el);
+      } else {
+        el.classList.add('in');
+      }
+    });
+  }
+  componentWillUnmount() {
+    clearTimeout(this._fallback);
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('storage', this._onStorage);
+    if (this._io) this._io.disconnect();
+  }
+  products() { return window.NXYLI_PRODUCTS || []; }
+  yen(n) { return '\u00A5' + n.toLocaleString('en-US'); }
+  imgFor(p, w) { return (window.nxyliImg ? window.nxyliImg(p.photo, w) : ''); }
+  add(id, e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const cart = this.state.cart.slice();
+    const ex = cart.find((i) => i.id === id);
+    if (ex) ex.qty++; else cart.push({ id, qty: 1 });
+    this.saveCart(cart);
+    this.setState({ drawer: true });
+  }
+  changeQty(id, d) {
+    let cart = this.state.cart.slice();
+    const it = cart.find((i) => i.id === id);
+    if (!it) return;
+    it.qty += d;
+    if (it.qty <= 0) cart = cart.filter((i) => i.id !== id);
+    this.saveCart(cart);
+  }
+  remove(id) { this.saveCart(this.state.cart.filter((i) => i.id !== id)); }
+  doSubscribe(e) {
+    e.preventDefault();
+    var email = e.target.querySelector('input[type=email]').value;
+    var done = () => this.setState({ subscribed: true });
+    if (window.NxyliAPI) window.NxyliAPI.subscribe(email).then(done, done);
+    else done();
+  }
+  decorate(p) {
+    return {
+      id: p.id, name: p.name, cat: p.cat, badge: p.badge || '',
+      priceLabel: this.yen(p.price),
+      img: this.imgFor(p, 900),
+      href: 'product.html?id=' + p.id,
+      onAdd: (e) => this.add(p.id, e)
+    };
+  }
+  renderVals() {
+    const prods = this.products();
+    const byId = (id) => prods.find((p) => p.id === id);
+    const pick = (ids) => ids.map(byId).filter(Boolean).map((p) => this.decorate(p));
+
+    // categories with count + representative image
+    const catOrder = ['Keyboards', 'Mouse', 'Monitors', 'Desks', 'Seating', 'Accessories'];
+    const cats = [];
+    catOrder.forEach((name) => {
+      const list = prods.filter((p) => p.cat === name);
+      if (!list.length) return;
+      cats.push({ name, count: list.length, img: this.imgFor(list[0], 500), href: 'collection.html?cat=' + encodeURIComponent(name) });
+    });
+
+    const cart = this.state.cart;
+    const cartItems = cart.map((ci) => {
+      const p = byId(ci.id); if (!p) return null;
+      return {
+        id: p.id, name: p.name, cat: p.cat, qty: ci.qty,
+        img: this.imgFor(p, 200),
+        lineLabel: this.yen(p.price * ci.qty),
+        onInc: () => this.changeQty(p.id, 1),
+        onDec: () => this.changeQty(p.id, -1),
+        onRemove: () => this.remove(p.id)
+      };
+    }).filter(Boolean);
+
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    const subtotal = cartItems.reduce((s, it, idx) => s + (byId(cart[idx] && cart[idx].id) ? 0 : 0), 0); // placeholder, recompute below
+    const sub = cart.reduce((s, ci) => { const p = byId(ci.id); return s + (p ? p.price * ci.qty : 0); }, 0);
+    const remain = Math.max(0, this.SHIP - sub);
+    const pct = Math.min(100, Math.round((sub / this.SHIP) * 100));
+
+    return {
+      heroMain: this.imgFor(byId('mon-lumen') || prods[0] || { photo: 15372902 }, 1100),
+      heroChip: this.imgFor(byId('kb-flow') || prods[0] || { photo: 18155963 }, 700),
+      editorialImg: window.nxyliImg ? window.nxyliImg(20213729, 1500) : '',
+      categories: cats,
+      featured: pick(['kb-flow', 'mon-vista', 'st-form', 'ms-drift']),
+      arrivals: pick(['ms-glide', 'dk-rise', 'st-rally', 'mon-lumen']),
+      cartCount: count,
+      cartItems,
+      cartEmpty: count === 0,
+      cartHasItems: count > 0,
+      subtotalLabel: this.yen(sub),
+      shipPct: pct + '%',
+      shipMsg: remain > 0 ? ('Add ' + this.yen(remain) + ' for free shipping') : 'You\u2019ve unlocked free shipping \u2713',
+      toggleCart: () => this.setState({ drawer: !this.state.drawer }),
+      closeCart: () => this.setState({ drawer: false }),
+      drawerX: this.state.drawer ? '0%' : '100%',
+      overlayOpacity: this.state.drawer ? 1 : 0,
+      overlayPE: this.state.drawer ? 'auto' : 'none',
+      navBg: this.state.scrolled ? 'rgba(236,234,228,.92)' : 'rgba(236,234,228,0)',
+      navBorder: this.state.scrolled ? 'rgba(0,0,0,.10)' : 'rgba(0,0,0,0)',
+      onSubscribe: (e) => this.doSubscribe(e),
+      subscribeLabel: this.state.subscribed ? 'Subscribed \u2713' : 'Subscribe'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sign In — NXY LI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="responsive.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#ECEAE4;color:#16150F;font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+::selection{background:#3F5D8C;color:#F4F2EC}
+.field input{width:100%;background:#F4F2EC;border:1px solid rgba(0,0,0,.16);border-radius:12px;padding:14px 16px;font-size:15px;color:#16150F;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#3F5D8C}
+.field label{display:block;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8A877E;margin-bottom:8px}
+.tab{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:none;border:none;padding:14px 0;color:#8A877E;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;flex:1;text-align:center}
+.tab.active{color:#16150F;border-color:#3F5D8C}
+.submit{width:100%;background:#16150F;color:#F4F2EC;border:none;border-radius:40px;padding:16px 32px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .25s,transform .25s cubic-bezier(.16,1,.3,1);margin-top:6px;cursor:pointer}
+.submit:hover{background:#3F5D8C;transform:translateY(-2px)}
+.errbox{background:rgba(201,138,122,.12);border:1px solid rgba(201,138,122,.4);border-radius:10px;padding:13px 16px;font-size:14px;color:#8C3A26}
+</style>
+</head>
+<body>
+
+<nav style="position:fixed;top:0;left:0;right:0;z-index:100;height:68px;padding:0 clamp(20px,4vw,52px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.10);background:rgba(236,234,228,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)">
+  <a href="index.html" style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;letter-spacing:.04em">NXY LI</a>
+  <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A877E">Account</div>
+  <a href="collection.html" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#56534B;transition:color .2s">← Continue shopping</a>
+</nav>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 20px 60px">
+  <div style="width:100%;max-width:420px">
+
+    <!-- SIGNED-IN STATE -->
+    <div id="signedInPanel" style="display:none;background:#F4F2EC;border:1px solid rgba(0,0,0,.08);border-radius:20px;padding:36px 32px;text-align:center">
+      <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#3F5D8C;margin-bottom:14px">Signed in</div>
+      <h1 style="font-family:'Newsreader',serif;font-weight:500;font-size:28px;margin-bottom:8px">Welcome back, <span id="signedInName" style="font-style:italic;color:#3F5D8C"></span></h1>
+      <p id="signedInEmail" style="color:#8A877E;font-size:14px;margin-bottom:28px"></p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="collection.html" style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:#16150F;color:#F4F2EC;padding:14px 28px;border-radius:40px;display:inline-block">Shop now</a>
+        <button id="signOutBtn" style="background:none;border:1px solid rgba(0,0,0,.16);border-radius:40px;padding:14px 28px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#56534B">Sign out</button>
+      </div>
+    </div>
+
+    <!-- AUTH FORM -->
+    <div id="authPanel">
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#3F5D8C;margin-bottom:14px">Your account</div>
+        <h1 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(28px,4vw,36px);letter-spacing:-.02em">Welcome to NXY LI</h1>
+      </div>
+
+      <div style="display:flex;border-bottom:1px solid rgba(0,0,0,.10);margin-bottom:28px">
+        <button class="tab active" data-tab="signin">Sign in</button>
+        <button class="tab" data-tab="register">Create account</button>
+      </div>
+
+      <form id="signinForm">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="field">
+            <label>Email address</label>
+            <input type="email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+          </div>
+          <div class="errbox" data-err="signin" style="display:none"></div>
+          <button type="submit" class="submit">Sign in</button>
+        </div>
+      </form>
+
+      <form id="registerForm" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="field">
+            <label>Full name</label>
+            <input type="text" name="name" placeholder="Kaung Myat Thu">
+          </div>
+          <div class="field">
+            <label>Email address</label>
+            <input type="email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="At least 8 characters" required minlength="8">
+          </div>
+          <div class="errbox" data-err="register" style="display:none"></div>
+          <button type="submit" class="submit">Create account</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script>
+(function () {
+  var TOKEN_KEY = 'nxyli_token';
+
+  var authPanel = document.getElementById('authPanel');
+  var signedInPanel = document.getElementById('signedInPanel');
+  var signinForm = document.getElementById('signinForm');
+  var registerForm = document.getElementById('registerForm');
+  var tabs = document.querySelectorAll('.tab');
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      var isSignin = tab.dataset.tab === 'signin';
+      signinForm.style.display = isSignin ? 'block' : 'none';
+      registerForm.style.display = isSignin ? 'none' : 'block';
+    });
+  });
+
+  function showError(which, message) {
+    var box = document.querySelector('.errbox[data-err="' + which + '"]');
+    box.textContent = message;
+    box.style.display = 'block';
+  }
+  function clearError(which) {
+    document.querySelector('.errbox[data-err="' + which + '"]').style.display = 'none';
+  }
+
+  function showSignedIn(user) {
+    authPanel.style.display = 'none';
+    signedInPanel.style.display = 'block';
+    document.getElementById('signedInName').textContent = user.name || user.email.split('@')[0];
+    document.getElementById('signedInEmail').textContent = user.email;
+  }
+
+  function trySavedToken() {
+    var token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return;
+    window.NxyliAPI.me(token).then(showSignedIn).catch(function () {
+      localStorage.removeItem(TOKEN_KEY);
+    });
+  }
+
+  signinForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearError('signin');
+    var email = signinForm.email.value.trim();
+    var password = signinForm.password.value;
+    window.NxyliAPI.login(email, password).then(function (res) {
+      localStorage.setItem(TOKEN_KEY, res.access_token);
+      return window.NxyliAPI.me(res.access_token);
+    }).then(showSignedIn).catch(function (err) {
+      showError('signin', err.message || 'Invalid email or password.');
+    });
+  });
+
+  registerForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearError('register');
+    var name = registerForm.name.value.trim();
+    var email = registerForm.email.value.trim();
+    var password = registerForm.password.value;
+    window.NxyliAPI.register(email, password, name).then(function (res) {
+      localStorage.setItem(TOKEN_KEY, res.access_token);
+      return window.NxyliAPI.me(res.access_token);
+    }).then(showSignedIn).catch(function (err) {
+      showError('register', err.message || 'Could not create account.');
+    });
+  });
+
+  document.getElementById('signOutBtn').addEventListener('click', function () {
+    localStorage.removeItem(TOKEN_KEY);
+    signedInPanel.style.display = 'none';
+    authPanel.style.display = 'block';
+    signinForm.reset();
+    registerForm.reset();
+  });
+
+  trySavedToken();
+})();
+</script>
+
+</body>
+</html>

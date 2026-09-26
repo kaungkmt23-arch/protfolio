@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="products.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#ECEAE4;color:#16150F;font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+::selection{background:#3F5D8C;color:#F4F2EC}
+.hu{transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.hu.armed{opacity:0;transform:translateY(20px)}
+.hu.armed.in{opacity:1;transform:none}
+.tstrip::-webkit-scrollbar{width:0}
+.cartScroll::-webkit-scrollbar{width:4px}
+.cartScroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14)}
+</style>
+</helmet>
+
+<div>
+  <!-- NAV -->
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:100;height:68px;padding:0 clamp(20px,4vw,52px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.10);background:rgba(236,234,228,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)">
+    <a href="NXY LI Home.dc.html" style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;letter-spacing:.04em">NXY LI</a>
+    <div style="display:flex;gap:32px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase">
+      <a href="NXY LI Collection.dc.html" style="transition:color .2s" style-hover="color:#3F5D8C">Shop</a>
+      <a href="NXY LI Collection.dc.html" style="transition:color .2s" style-hover="color:#3F5D8C">Collections</a>
+      <a href="NXY LI Home.dc.html" style="transition:color .2s" style-hover="color:#3F5D8C">Setup Guide</a>
+      <a href="NXY LI Home.dc.html" style="transition:color .2s" style-hover="color:#3F5D8C">Studio</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px">
+      <button aria-label="Search" style="background:none;border:none;color:#16150F;display:flex;padding:4px;transition:color .2s" style-hover="color:#3F5D8C"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button>
+      <button aria-label="Cart" onClick="{{ toggleCart }}" style="background:none;border:none;color:#16150F;display:flex;align-items:center;gap:7px;padding:4px;transition:color .2s" style-hover="color:#3F5D8C"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg><span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;min-width:14px">{{ cartCount }}</span></button>
+    </div>
+  </nav>
+
+  <!-- STICKY ADD BAR -->
+  <div style="position:fixed;top:68px;left:0;right:0;z-index:90;background:rgba(20,19,15,.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08);transform:translateY({{ stickyY }});transition:transform .35s cubic-bezier(.23,1,.32,1)">
+    <div style="max-width:1340px;margin:0 auto;padding:12px clamp(20px,4vw,52px);display:flex;align-items:center;justify-content:space-between;gap:18px">
+      <div style="display:flex;align-items:center;gap:14px;min-width:0">
+        <img data-src="{{ stickyImg }}" alt="{{ name }}" style="width:42px;height:42px;border-radius:9px;object-fit:cover;background:#221E18;flex-shrink:0">
+        <div style="min-width:0">
+          <div style="font-size:14px;font-weight:500;color:#F4F2EC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ name }}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:12px;color:#9DB4D6">{{ priceLabel }}</div>
+        </div>
+      </div>
+      <button onClick="{{ onAddMain }}" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:#3F5D8C;color:#F4F2EC;border:none;padding:12px 26px;border-radius:30px;flex-shrink:0;transition:background .2s" style-hover="background:#4d6fa5">{{ addLabel }}</button>
+    </div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div class="hu" style="padding:88px clamp(20px,4vw,52px) 0;display:flex;align-items:center;gap:9px;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A877E">
+    <a href="NXY LI Home.dc.html" style="transition:color .2s" style-hover="color:#3F5D8C">Home</a>
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+    <a href="NXY LI Collection.dc.html" style="transition:color .2s" style-hover="color:#3F5D8C">{{ cat }}</a>
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+    <span style="color:#16150F">{{ name }}</span>
+  </div>
+
+  <!-- MAIN -->
+  <div style="max-width:1340px;margin:0 auto;padding:34px clamp(20px,4vw,52px) 20px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start">
+
+    <!-- GALLERY -->
+    <div class="hu" style="position:sticky;top:96px;display:grid;grid-template-columns:72px 1fr;gap:14px">
+      <div class="tstrip" style="display:flex;flex-direction:column;gap:10px;max-height:560px;overflow-y:auto">
+        <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="0">
+          <button onClick="{{ g.onSelect }}" style="aspect-ratio:1/1;border-radius:11px;overflow:hidden;border:2px solid {{ g.border }};background:#E1DED5;padding:0;opacity:{{ g.opacity }};transition:border-color .2s,opacity .2s">
+            <img data-src="{{ g.thumb }}" alt="View" style="width:100%;height:100%;object-fit:cover">
+          </button>
+        </sc-for>
+      </div>
+      <div style="aspect-ratio:4/5;border-radius:22px;overflow:hidden;background:#E1DED5;box-shadow:0 30px 64px -30px rgba(0,0,0,.4);position:relative">
+        <img data-src="{{ mainImg }}" alt="{{ name }}" style="width:100%;height:100%;object-fit:cover;transition:opacity .3s">
+        <div style="position:absolute;bottom:14px;right:14px;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#F4F2EC;background:rgba(20,19,15,.45);padding:5px 10px;border-radius:20px;backdrop-filter:blur(6px)">{{ galleryPos }}</div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="hu" style="transition-delay:.1s;padding-top:4px">
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#3F5D8C;margin-bottom:14px">{{ cat }}</div>
+      <h1 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(32px,4vw,52px);line-height:1.04;letter-spacing:-.02em;margin-bottom:16px">{{ name }}</h1>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px">
+        <span style="color:#3F5D8C;letter-spacing:2px;font-size:15px">{{ stars }}</span>
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:#6E6B62">{{ ratingLabel }}</span>
+      </div>
+      <div style="font-family:'Newsreader',serif;font-size:32px;font-weight:500;margin-bottom:8px">{{ priceLabel }}</div>
+      <p style="font-size:15px;line-height:1.7;color:#56534B;max-width:440px;margin-bottom:28px">{{ blurb }}</p>
+
+      <div style="height:1px;background:rgba(0,0,0,.10);margin-bottom:26px"></div>
+
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:13px">Finish — <span style="color:#6E6B62">{{ activeColor }}</span></div>
+      <div style="display:flex;gap:10px;margin-bottom:28px">
+        <sc-for list="{{ colors }}" as="c" hint-placeholder-count="4">
+          <button onClick="{{ c.onSelect }}" title="{{ c.name }}" style="width:30px;height:30px;border-radius:50%;background:{{ c.hex }};border:2px solid {{ c.border }};transform:{{ c.scale }};transition:transform .2s,border-color .2s;cursor:pointer"></button>
+        </sc-for>
+      </div>
+
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:13px">{{ variantLabel }}</div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:30px">
+        <sc-for list="{{ variants }}" as="v" hint-placeholder-count="3">
+          <button onClick="{{ v.onSelect }}" style="min-width:52px;padding:10px 16px;border-radius:30px;background:{{ v.bg }};border:1px solid {{ v.border }};color:{{ v.color }};font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;transition:all .2s;cursor:pointer">{{ v.name }}</button>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:stretch;margin-bottom:26px">
+        <div style="display:flex;align-items:center;border:1px solid rgba(0,0,0,.16);border-radius:40px;overflow:hidden">
+          <button onClick="{{ onDecQty }}" aria-label="Decrease" style="width:44px;height:52px;background:none;border:none;font-size:18px;color:#16150F">−</button>
+          <span style="font-family:'Space Mono',monospace;font-size:14px;min-width:26px;text-align:center">{{ qty }}</span>
+          <button onClick="{{ onIncQty }}" aria-label="Increase" style="width:44px;height:52px;background:none;border:none;font-size:18px;color:#16150F">+</button>
+        </div>
+        <button onClick="{{ onAddMain }}" style="flex:1;background:#16150F;color:#F4F2EC;border:none;border-radius:40px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .25s,transform .25s cubic-bezier(.16,1,.3,1)" style-hover="background:#3F5D8C;transform:translateY(-2px)">{{ addLabel }}</button>
+        <button onClick="{{ onWish }}" aria-label="Wishlist" style="width:52px;border:1px solid rgba(0,0,0,.16);border-radius:50%;background:{{ wishBg }};color:{{ wishColor }};display:flex;align-items:center;justify-content:center;transition:all .2s">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ wishFill }}" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(0,0,0,.10);border:1px solid rgba(0,0,0,.10);border-radius:14px;overflow:hidden">
+        <sc-for list="{{ quickSpecs }}" as="q" hint-placeholder-count="3">
+          <div style="background:#F4F2EC;padding:18px 12px;text-align:center">
+            <div style="color:#3F5D8C;display:flex;justify-content:center;margin-bottom:9px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path data-d="{{ q.icon }}"/></svg></div>
+            <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px">{{ q.val }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#8A877E">{{ q.key }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <section style="max-width:1340px;margin:0 auto;padding:48px clamp(20px,4vw,52px) 20px">
+    <div class="hu" style="display:flex;gap:4px;border-bottom:1px solid rgba(0,0,0,.10);margin-bottom:34px;flex-wrap:wrap">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.onSelect }}" style="padding:12px 24px;background:none;border:none;border-bottom:2px solid {{ t.border }};margin-bottom:-1px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:{{ t.color }};transition:color .2s">{{ t.name }}</button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ showOverview }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:720px;display:flex;flex-direction:column;gap:16px;font-size:15px;line-height:1.85;color:#56534B">
+        <p>{{ overview1 }}</p>
+        <p>{{ overview2 }}</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ false }}">
+      <table style="width:100%;max-width:640px;border-collapse:collapse">
+        <sc-for list="{{ specRows }}" as="r" hint-placeholder-count="5">
+          <tr style="border-bottom:1px solid rgba(0,0,0,.10)">
+            <td style="padding:14px 0;font-size:14px;color:#8A877E;width:42%;font-family:'Space Mono',monospace;letter-spacing:.02em">{{ r.k }}</td>
+            <td style="padding:14px 0;font-size:14px;color:#16150F;font-weight:500">{{ r.v }}</td>
+          </tr>
+        </sc-for>
+      </table>
+    </sc-if>
+    <sc-if value="{{ showBox }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:640px;display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ boxItems }}" as="b" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:14px;font-size:15px;color:#16150F"><span style="width:6px;height:6px;border-radius:50%;background:#3F5D8C;flex-shrink:0"></span>{{ b }}</div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showReviews }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:720px">
+        <sc-for list="{{ reviews }}" as="rv" hint-placeholder-count="3">
+          <div style="padding:24px 0;border-bottom:1px solid rgba(0,0,0,.10)">
+            <div style="color:#3F5D8C;letter-spacing:2px;margin-bottom:8px">{{ rv.stars }}</div>
+            <div style="font-family:'Newsreader',serif;font-size:18px;font-weight:500;margin-bottom:7px">{{ rv.title }}</div>
+            <div style="font-size:14px;line-height:1.75;color:#56534B;margin-bottom:9px">{{ rv.body }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.04em;color:#A8A498">{{ rv.meta }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </section>
+
+  <!-- RELATED -->
+  <section style="max-width:1340px;margin:0 auto;padding:50px clamp(20px,4vw,52px) 80px">
+    <div class="hu" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:30px">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#3F5D8C;margin-bottom:10px">Complete the setup</div>
+        <h2 style="font-family:'Newsreader',serif;font-weight:500;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.02em">You may also like</h2>
+      </div>
+      <a href="NXY LI Collection.dc.html" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#56534B;display:flex;align-items:center;gap:8px;transition:color .2s" style-hover="color:#3F5D8C">View all →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px">
+      <sc-for list="{{ related }}" as="p" hint-placeholder-count="0">
+        <a href="{{ p.href }}" class="hu" style="display:block">
+          <div style="aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#E1DED5;position:relative;box-shadow:0 12px 30px -18px rgba(0,0,0,.32);transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s" style-hover="transform:translateY(-8px);box-shadow:0 26px 46px -20px rgba(0,0,0,.45)">
+            <img data-src="{{ p.img }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.16,1,.3,1)" style-hover="transform:scale(1.07)">
+            <button onClick="{{ p.onAdd }}" aria-label="Add to cart" style="position:absolute;bottom:13px;right:13px;width:40px;height:40px;border-radius:50%;border:none;background:#F4F2EC;color:#16150F;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -6px rgba(0,0,0,.4);transition:transform .2s,background .2s,color .2s" style-hover="transform:scale(1.12);background:#3F5D8C;color:#F4F2EC"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <div style="padding:15px 2px 0;display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#3F5D8C;margin-bottom:5px">{{ p.cat }}</div>
+              <div style="font-family:'Newsreader',serif;font-size:19px;font-weight:500;line-height:1.15">{{ p.name }}</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-size:13px;white-space:nowrap">{{ p.priceLabel }}</div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#14130F;color:#8C887E;padding:40px clamp(20px,4vw,52px);border-top:1px solid rgba(255,255,255,.06)">
+    <div style="max-width:1340px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <a href="NXY LI Home.dc.html" style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;letter-spacing:.04em;color:#F4F2EC">NXY LI</a>
+      <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;color:rgba(140,136,126,.6)">© 2026 NXY LI — Tokyo / Worldwide</span>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div onClick="{{ closeCart }}" style="position:fixed;inset:0;background:rgba(8,7,5,.5);z-index:300;opacity:{{ overlayOpacity }};pointer-events:{{ overlayPE }};transition:opacity .35s"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);background:#14130F;z-index:301;display:flex;flex-direction:column;transform:translateX({{ drawerX }});transition:transform .42s cubic-bezier(.23,1,.32,1);border-left:1px solid rgba(255,255,255,.07)">
+    <div style="padding:24px 28px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:'Newsreader',serif;font-size:21px;font-weight:500;color:#F4F2EC">Your cart <span style="font-family:'Space Mono',monospace;font-size:12px;color:#8C887E">({{ cartCount }})</span></div>
+      <button onClick="{{ closeCart }}" aria-label="Close" style="background:none;border:none;color:#8C887E;display:flex;padding:4px;transition:color .2s" style-hover="color:#F4F2EC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="cartScroll" style="flex:1;overflow-y:auto;padding:8px 28px">
+      <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:#8C887E;text-align:center;padding:40px 0">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" style="opacity:.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+          <p style="font-size:14px">Your cart is empty</p>
+        </div>
+      </sc-if>
+      <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="0">
+        <div style="display:grid;grid-template-columns:64px 1fr auto;gap:14px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+          <img data-src="{{ it.img }}" alt="{{ it.name }}" style="width:64px;height:64px;object-fit:cover;border-radius:10px;background:#221E18">
+          <div>
+            <div style="font-size:14px;font-weight:500;color:#F4F2EC;margin-bottom:3px">{{ it.name }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8C887E;margin-bottom:10px">{{ it.cat }}</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="display:flex;align-items:center;border:1px solid rgba(255,255,255,.14);border-radius:20px">
+                <button onClick="{{ it.onDec }}" aria-label="Decrease" style="width:26px;height:26px;background:none;border:none;color:#F4F2EC;font-size:15px;display:flex;align-items:center;justify-content:center">−</button>
+                <span style="font-family:'Space Mono',monospace;font-size:12px;color:#F4F2EC;min-width:18px;text-align:center">{{ it.qty }}</span>
+                <button onClick="{{ it.onInc }}" aria-label="Increase" style="width:26px;height:26px;background:none;border:none;color:#F4F2EC;font-size:15px;display:flex;align-items:center;justify-content:center">+</button>
+              </div>
+              <button onClick="{{ it.onRemove }}" style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#8C887E;background:none;border:none;transition:color .2s" style-hover="color:#C98A7A">Remove</button>
+            </div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:13px;color:#F4F2EC;white-space:nowrap">{{ it.lineLabel }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ cartHasItems }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:20px 28px;border-top:1px solid rgba(255,255,255,.08)">
+        <div style="height:5px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:10px"><div style="height:100%;width:{{ shipPct }};background:#3F5D8C;border-radius:5px;transition:width .4s"></div></div>
+        <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.06em;color:#9DB4D6;text-align:center;margin-bottom:18px">{{ shipMsg }}</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px">
+          <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8C887E">Subtotal</span>
+          <span style="font-family:'Newsreader',serif;font-size:24px;font-weight:500;color:#F4F2EC">{{ subtotalLabel }}</span>
+        </div>
+        <a href="NXY LI Home.dc.html" style="display:block;text-align:center;background:#3F5D8C;color:#F4F2EC;padding:16px;border-radius:40px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:background .2s" style-hover="background:#4d6fa5">Proceed to checkout</a>
+        <button onClick="{{ closeCart }}" style="display:block;width:100%;text-align:center;margin-top:12px;background:none;border:none;color:#8C887E;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:color .2s" style-hover="color:#F4F2EC">Continue shopping</button>
+      </div>
+    </sc-if>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.KEY = 'nxyli_cart_v2';
+    this.SHIP = 15000;
+    var id = null;
+    try { var m = location.search.match(/[?&]id=([^&]+)/); if (m) id = decodeURIComponent(m[1]); } catch (e) {}
+    this.state = {
+      cart: this.readCart(), drawer: false, pid: id,
+      galIdx: 0, colorIdx: 0, variantIdx: 0, qty: 1, tab: 'overview',
+      wished: false, added: false, sticky: false, tick: 0
+    };
+  }
+  readCart() { try { return JSON.parse(localStorage.getItem('nxyli_cart_v2') || '[]'); } catch (e) { return []; } }
+  saveCart(cart) { try { localStorage.setItem(this.KEY, JSON.stringify(cart)); } catch (e) {} this.setState({ cart }); }
+  componentDidMount() {
+    if (!(window.NXYLI_PRODUCTS && window.NXYLI_PRODUCTS.length)) setTimeout(() => this.setState({ tick: this.state.tick + 1 }), 60);
+    requestAnimationFrame(() => this.processReveals());
+    this._fallback = setTimeout(() => { document.querySelectorAll('.hu').forEach((el) => el.classList.add('in')); }, 1700);
+    this._onScroll = () => { const s = window.scrollY > 540; if (s !== this.state.sticky) this.setState({ sticky: s }); };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    this._onStorage = (e) => { if (e.key === this.KEY) this.setState({ cart: this.readCart() }); };
+    window.addEventListener('storage', this._onStorage);
+  }
+  componentDidUpdate() { this.processReveals(); }
+  processReveals() {
+    document.querySelectorAll('.hu').forEach((el) => {
+      if (el._rvDone) return; el._rvDone = true;
+      el.classList.add('armed');
+      const top = el.getBoundingClientRect().top;
+      const vh = window.innerHeight || 800;
+      if (top < vh * 0.95) requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+      else { requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in'))); }
+    });
+  }
+  componentWillUnmount() {
+    clearTimeout(this._fallback);
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('storage', this._onStorage);
+  }
+  products() { return window.NXYLI_PRODUCTS || []; }
+  yen(n) { return '\u00A5' + n.toLocaleString('en-US'); }
+  photoUrl(pid, w) { return window.nxyliImg ? window.nxyliImg(pid, w) : ''; }
+  current() {
+    const ps = this.products();
+    return ps.find((p) => p.id === this.state.pid) || ps[0] || null;
+  }
+  add(id, qty, e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const cart = this.state.cart.slice();
+    const ex = cart.find((i) => i.id === id);
+    if (ex) ex.qty += (qty || 1); else cart.push({ id, qty: qty || 1 });
+    this.saveCart(cart);
+    this.setState({ drawer: true });
+  }
+  addMain() {
+    const p = this.current(); if (!p) return;
+    this.add(p.id, this.state.qty);
+    this.setState({ added: true });
+    clearTimeout(this._addT); this._addT = setTimeout(() => this.setState({ added: false }), 1800);
+  }
+  changeQty(id, d) {
+    let cart = this.state.cart.slice();
+    const it = cart.find((i) => i.id === id); if (!it) return;
+    it.qty += d; if (it.qty <= 0) cart = cart.filter((i) => i.id !== id);
+    this.saveCart(cart);
+  }
+  remove(id) { this.saveCart(this.state.cart.filter((i) => i.id !== id)); }
+  variantsFor(cat) {
+    const map = {
+      Keyboards: { label: 'Layout', opts: ['TKL', 'Full size', '65%', '60%'] },
+      Mice: { label: 'Hand', opts: ['Right', 'Left'] },
+      Monitors: { label: 'Configuration', opts: ['Monitor only', 'Monitor + arm'] },
+      Desks: { label: 'Width', opts: ['140 cm', '160 cm', '180 cm'] },
+      Seating: { label: 'Headrest', opts: ['Standard', 'With headrest'] },
+      Lighting: { label: 'Finish', opts: ['Graphite', 'Silver'] },
+      Accessories: { label: 'Size', opts: ['Medium', 'XL'] }
+    };
+    return map[cat] || { label: 'Option', opts: ['Standard'] };
+  }
+  renderVals() {
+    const p = this.current();
+    const ps = this.products();
+    if (!p) {
+      return { name: 'Loading…', cat: '', priceLabel: '', blurb: '', stars: '', ratingLabel: '', mainImg: '', stickyImg: '', galleryPos: '', gallery: [], colors: [], variants: [], variantLabel: '', activeColor: '', quickSpecs: [], tabs: [], reviews: [], specRows: [], boxItems: [], related: [], cartItems: [], cartCount: 0, cartEmpty: true, cartHasItems: false, subtotalLabel: '¥0', shipPct: '0%', shipMsg: '', qty: 1, addLabel: 'Add to cart', drawerX: '100%', overlayOpacity: 0, overlayPE: 'none', stickyY: '-110%', showOverview: true, showSpecs: false, showBox: false, showReviews: false, overview1: '', overview2: '', wishBg: 'transparent', wishColor: '#6E6B62', wishFill: 'none', toggleCart: () => {}, closeCart: () => {}, onAddMain: () => {}, onIncQty: () => {}, onDecQty: () => {}, onWish: () => {} };
+    }
+
+    // gallery: product photo + a few alternates
+    const pool = [18155963, 28228015, 15372902, 14016665, 3829226, 20213729];
+    const extras = pool.filter((x) => x !== p.photo).slice(0, 3);
+    const photos = [p.photo].concat(extras);
+    const gallery = photos.map((ph, i) => ({
+      thumb: this.photoUrl(ph, 200),
+      border: i === this.state.galIdx ? '#3F5D8C' : 'transparent',
+      opacity: i === this.state.galIdx ? 1 : 0.55,
+      onSelect: () => this.setState({ galIdx: i })
+    }));
+    const mainPhoto = photos[this.state.galIdx] || p.photo;
+
+    // colours
+    const colorDefs = [
+      { name: 'Graphite', hex: '#3A3835' }, { name: 'Ivory', hex: '#E5DECF' },
+      { name: 'Midnight', hex: '#1E2A3A' }, { name: 'Slate', hex: '#6A6E72' }
+    ];
+    const colors = colorDefs.map((c, i) => ({
+      name: c.name, hex: c.hex,
+      border: i === this.state.colorIdx ? '#3F5D8C' : 'rgba(0,0,0,.12)',
+      scale: i === this.state.colorIdx ? 'scale(1.15)' : 'scale(1)',
+      onSelect: () => this.setState({ colorIdx: i })
+    }));
+
+    // variants
+    const vdef = this.variantsFor(p.cat);
+    const variants = vdef.opts.map((name, i) => ({
+      name,
+      bg: i === this.state.variantIdx ? 'rgba(63,93,140,.10)' : '#F4F2EC',
+      border: i === this.state.variantIdx ? '#3F5D8C' : 'rgba(0,0,0,.14)',
+      color: i === this.state.variantIdx ? '#3F5D8C' : '#6E6B62',
+      onSelect: () => this.setState({ variantIdx: i })
+    }));
+
+    // quick specs (category-aware-ish)
+    const conn = (p.conn && p.conn.length) ? p.conn[0] : 'Wired';
+    const quickSpecs = [
+      { icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', val: '5 yr', key: 'Guarantee' },
+      { icon: 'M20 6L9 17l-5-5', val: 'In stock', key: 'Ships today' },
+      { icon: 'M3 12a9 9 0 1018 0 9 9 0 00-18 0zM12 7v5l3 2', val: '30 day', key: 'Returns' }
+    ];
+
+    // tabs
+    const tabDefs = [['overview', 'Overview'], ['specs', 'Tech specs'], ['box', 'In the box'], ['reviews', 'Reviews (124)']];
+    const tabs = tabDefs.map(([k, name]) => ({
+      name,
+      color: this.state.tab === k ? '#3F5D8C' : '#8A877E',
+      border: this.state.tab === k ? '#3F5D8C' : 'transparent',
+      onSelect: () => this.setState({ tab: k })
+    }));
+
+    const specRows = [
+      { k: 'Category', v: p.cat },
+      { k: 'Connectivity', v: (p.conn && p.conn.length) ? p.conn.join(', ') : 'Not applicable' },
+      { k: 'Materials', v: 'CNC aluminium, recycled polymer' },
+      { k: 'Warranty', v: '5-year limited' },
+      { k: 'Compatibility', v: 'macOS, Windows, Linux' },
+      { k: 'Ships', v: 'Within 24 hours' }
+    ];
+    const boxItems = [p.name + ' (' + vdef.opts[this.state.variantIdx] + ')', '1.8m braided USB-C cable', 'Quick-start guide', '5-year warranty card'];
+
+    const reviews = [
+      { stars: '★★★★★', title: 'Best in its class', body: 'After months of daily, 8-hour use it has become invisible in the best way — I stopped noticing it and started noticing my work.', meta: 'Sato K. — Verified — April 2026' },
+      { stars: '★★★★★', title: 'Worth every yen', body: 'Build quality is immediately obvious out of the box. Nothing rattles, nothing flexes. Connection has never dropped once.', meta: 'M. Tanaka — Verified — March 2026' },
+      { stars: '★★★★☆', title: 'Near perfect', body: 'Exceptional overall. Took a day to adjust to, but everything is exactly as described. Would buy again.', meta: 'A. Park — Verified — Feb 2026' }
+    ];
+
+    // related
+    const related = ps.filter((x) => x.id !== p.id).slice(0, 4).map((x) => ({
+      id: x.id, name: x.name, cat: x.cat, priceLabel: this.yen(x.price),
+      img: this.photoUrl(x.photo, 800), href: 'NXY LI Product.dc.html?id=' + x.id,
+      onAdd: (e) => this.add(x.id, 1, e)
+    }));
+
+    // cart
+    const byId = (id) => ps.find((x) => x.id === id);
+    const cart = this.state.cart;
+    const cartItems = cart.map((ci) => {
+      const cp = byId(ci.id); if (!cp) return null;
+      return { id: cp.id, name: cp.name, cat: cp.cat, qty: ci.qty, img: this.photoUrl(cp.photo, 200), lineLabel: this.yen(cp.price * ci.qty), onInc: () => this.changeQty(cp.id, 1), onDec: () => this.changeQty(cp.id, -1), onRemove: () => this.remove(cp.id) };
+    }).filter(Boolean);
+    const count = cart.reduce((a, i) => a + i.qty, 0);
+    const sub = cart.reduce((a, ci) => { const cp = byId(ci.id); return a + (cp ? cp.price * ci.qty : 0); }, 0);
+    const remain = Math.max(0, this.SHIP - sub);
+
+    return {
+      name: p.name, cat: p.cat, priceLabel: this.yen(p.price), blurb: p.blurb || '',
+      stars: '★★★★★', ratingLabel: '4.9 (124 reviews)',
+      mainImg: this.photoUrl(mainPhoto, 1100), stickyImg: this.photoUrl(p.photo, 120),
+      galleryPos: (this.state.galIdx + 1) + ' / ' + photos.length,
+      gallery, colors, activeColor: colorDefs[this.state.colorIdx].name,
+      variants, variantLabel: vdef.label,
+      quickSpecs, tabs, specRows, boxItems, reviews, related,
+      showOverview: this.state.tab === 'overview', showSpecs: this.state.tab === 'specs', showBox: this.state.tab === 'box', showReviews: this.state.tab === 'reviews',
+      overview1: p.name + ' is built for the way serious people actually work — for hours, not minutes. ' + (p.blurb || ''),
+      overview2: 'Every NXY LI product is designed to work as part of one unified workspace. Held to tolerances of 0.01mm, finished by hand, and backed by a five-year guarantee — confidence in the product should never cost extra.',
+      qty: this.state.qty,
+      onIncQty: () => this.setState({ qty: Math.min(this.state.qty + 1, 10) }),
+      onDecQty: () => this.setState({ qty: Math.max(this.state.qty - 1, 1) }),
+      addLabel: this.state.added ? 'Added \u2713' : 'Add to cart',
+      onAddMain: () => this.addMain(),
+      onWish: () => this.setState({ wished: !this.state.wished }),
+      wishBg: this.state.wished ? 'rgba(63,93,140,.10)' : 'transparent',
+      wishColor: this.state.wished ? '#3F5D8C' : '#6E6B62',
+      wishFill: this.state.wished ? '#3F5D8C' : 'none',
+      stickyY: this.state.sticky ? '0%' : '-110%',
+      cartCount: count, cartItems, cartEmpty: count === 0, cartHasItems: count > 0,
+      subtotalLabel: this.yen(sub), shipPct: Math.min(100, Math.round((sub / this.SHIP) * 100)) + '%',
+      shipMsg: remain > 0 ? ('Add ' + this.yen(remain) + ' for free shipping') : 'You\u2019ve unlocked free shipping \u2713',
+      toggleCart: () => this.setState({ drawer: !this.state.drawer }), closeCart: () => this.setState({ drawer: false }),
+      drawerX: this.state.drawer ? '0%' : '100%', overlayOpacity: this.state.drawer ? 1 : 0, overlayPE: this.state.drawer ? 'auto' : 'none'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+/* Mobile layout fixes shared across all pages */
+
+@media (max-width:680px){
+  .nav-links{display:none}
+}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr !important}
+  .collection-layout{grid-template-columns:1fr !important}
+  .collection-layout .sb{position:static !important;height:auto !important;border-right:none !important;border-bottom:1px solid rgba(0,0,0,.10)}
+  .product-layout{grid-template-columns:1fr !important}
+  .gallery-sticky{position:static !important}
+  .checkout-layout{grid-template-columns:1fr !important}
+}
+
+@media (max-width:900px){
+  .cat-grid{grid-template-columns:repeat(3,1fr) !important}
+  .prod-grid-4{grid-template-columns:repeat(2,1fr) !important}
+  .prod-grid-3{grid-template-columns:repeat(2,1fr) !important}
+}
+
+@media (max-width:520px){
+  .cat-grid{grid-template-columns:repeat(2,1fr) !important}
+  .prod-grid-3{grid-template-columns:1fr !important}
+}
+
+@media (max-width:680px){
+  .footer-grid{grid-template-columns:1fr 1fr !important}
+}
+@media (max-width:420px){
+  .footer-grid{grid-template-columns:1fr !important}
+}

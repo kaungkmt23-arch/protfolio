@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Xila — Studios of human craft and machine intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #ebe6db;
+    --paper-2: #e2dcce;
+    --ink: #14110d;
+    --ink-2: #2a261f;
+    --muted: #4a443a;
+    --rule: rgba(20,17,13,0.16);
+    --accent: #b53a1f;
+    --grain: 0.18;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:'Geist',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  body{min-height:100dvh}
+  ::selection{background:var(--ink);color:var(--paper)}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  /* Global grain overlay */
+  body::before{
+    content:'';
+    position:fixed;inset:0;pointer-events:none;z-index:9999;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode:multiply;opacity:var(--grain);
+  }
+
+  /* Halftone dot SVG filter (applied via class) */
+  .halftone{position:relative}
+  .halftone::after{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(20,17,13,0.85) 0.55px, transparent 1.1px);
+    background-size:3px 3px;
+    mix-blend-mode:multiply;
+    opacity:.42;
+  }
+
+  .container{max-width:1320px;margin-inline:auto;padding-inline:32px}
+
+  /* ============ NAV ============ */
+  nav.bar{
+    position:fixed;top:18px;left:0;right:0;z-index:50;
+    display:flex;justify-content:center;pointer-events:none;
+  }
+  nav.bar .inner{
+    pointer-events:auto;
+    display:flex;align-items:center;gap:28px;
+    padding:10px 12px 10px 22px;
+    background:rgba(235,230,219,0.7);
+    backdrop-filter:saturate(140%) blur(14px);
+    -webkit-backdrop-filter:saturate(140%) blur(14px);
+    border:1px solid var(--rule);
+    border-radius:999px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.5) inset, 0 12px 30px -18px rgba(0,0,0,0.25);
+  }
+  .brand{font-family:'Bricolage Grotesque','Geist',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.02em;display:flex;align-items:center;gap:4px}
+  .brand sup{font-size:9px;font-weight:600;letter-spacing:0.08em;color:var(--muted);transform:translateY(-4px)}
+  nav.bar ul{display:flex;gap:6px;list-style:none}
+  nav.bar ul a{
+    position:relative;padding:8px 14px;border-radius:999px;
+    font-size:14px;font-weight:500;color:var(--ink-2);
+    transition:color .2s ease, background-color .2s ease;
+  }
+  nav.bar ul a:hover{background:rgba(20,17,13,0.06)}
+  nav.bar .right{display:flex;align-items:center;gap:8px;margin-left:6px}
+  .ghost{padding:8px 14px;border-radius:999px;font-size:14px;font-weight:500;color:var(--ink-2)}
+  .ghost:hover{background:rgba(20,17,13,0.06)}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 18px 10px 18px;border-radius:999px;
+    background:var(--ink);color:var(--paper);
+    font-size:14px;font-weight:500;letter-spacing:-0.005em;
+    transition:transform .12s ease, background-color .2s ease;
+    will-change:transform;
+  }
+  .pill:hover{background:#000}
+  .pill:active{transform:scale(0.985);transition:transform 90ms ease-out}
+  .pill .arr{display:inline-block;transform:translate(0,0);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+  .pill:hover .arr{transform:translate(2px,-2px)}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;padding:110px 0 36px;min-height:100dvh;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .hero .art{
+    position:relative;
+    grid-row:2;
+    align-self:stretch;
+    width:100%;
+    z-index:0;
+    pointer-events:none;
+    overflow:hidden;
+    will-change:transform;
+  }
+  .hero .art img{
+    width:100%;height:100%;object-fit:cover;
+    object-position:42% 46%;
+    filter:grayscale(1) contrast(1.15) brightness(1.08);
+    opacity:.62;
+    transform:scale(1.04);
+    will-change:transform;
+  }
+  .hero .art::after{
+    content:'';position:absolute;inset:0;
+    background-image:radial-gradient(rgba(20,17,13,0.85) 0.5px, transparent 1.0px);
+    background-size:2.4px 2.4px;
+    mix-blend-mode:multiply;opacity:.55;
+  }
+  /* paper wash on top/bottom edges of painting strip to fade into page */
+  .hero .art::before{
+    content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:
+      linear-gradient(180deg,
+        var(--paper) 0%,
+        rgba(235,230,219,0.6) 14%,
+        transparent 32%,
+        transparent 68%,
+        rgba(235,230,219,0.6) 86%,
+        var(--paper) 100%);
+  }
+  .hero .heroText{position:relative;z-index:3;grid-row:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:8px}
+  .hero .trustWrap{position:relative;z-index:3;grid-row:3}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:12px;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;margin-bottom:28px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  h1.display{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:700;
+    font-size:clamp(48px, 7.2vw, 104px);
+    letter-spacing:-0.035em;
+    line-height:0.96;
+    color:var(--ink);
+    max-width:14ch;
+    margin-inline:auto;
+  }
+  h1.display em{font-style:italic;font-weight:600;font-family:'Bricolage Grotesque',serif;padding-right:4px;}
+  .hero .sub{
+    margin-top:26px;max-width:46ch;color:var(--ink-2);
+    font-size:17px;line-height:1.55;
+  }
+  .hero .ctaRow{margin-top:36px;display:flex;gap:12px;align-items:center}
+  .ctaRow .link{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-2);padding:10px 6px}
+  .ctaRow .link:hover{color:var(--ink)}
+
+  .trustWrap{position:relative;z-index:2;padding-top:32px}
+  .trustLabel{text-align:center;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+  .logos{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:22px;align-items:center;
+  }
+  .logos .logo{
+    display:flex;align-items:center;justify-content:center;
+    height:30px;opacity:.72;filter:grayscale(1) contrast(1.1);
+    transition:opacity .2s ease;
+  }
+  .logos .logo:hover{opacity:1}
+  .logos .logo img{height:22px;width:auto}
+
+  /* word reveal */
+  .word{display:inline-block;overflow:hidden;vertical-align:top}
+  .word > span{display:inline-block;transform:translateY(112%);opacity:0;filter:blur(8px);will-change:transform,opacity,filter}
+
+  /* ============ SECTION FRAME ============ */
+  section{position:relative;padding:120px 0}
+  .secLabel{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:32px;display:inline-flex;align-items:center;gap:10px}
+  .secLabel::before{content:'';width:24px;height:1px;background:var(--muted);display:inline-block}
+
+  /* ============ MANIFESTO ============ */
+  .manifesto{padding:160px 0 160px;position:relative}
+  .manifesto h2{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:600;font-size:clamp(36px,5.4vw,82px);
+    letter-spacing:-0.03em;line-height:1.02;
+    max-width:22ch;
+  }
+  .manifesto h2 em{font-style:italic;font-weight:500;color:var(--ink-2)}
+  .manifesto .ornament{display:block;margin:0 0 36px 0;width:46px;height:46px;opacity:.7}
+  .manifesto .foot{margin-top:42px;display:flex;justify-content:space-between;align-items:end;color:var(--muted);font-size:13px;letter-spacing:0.04em}
+  .manifesto .foot .sig{font-family:'Bricolage Grotesque',sans-serif;font-style:italic;color:var(--ink-2);font-size:18px}
+
+  /* ============ SERVICES ============ */
+  .services{padding:80px 0 140px}
+  .services .head{display:flex;justify-content:space-between;align-items:end;gap:60px;margin-bottom:60px}
+  .services .head h3{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:600;
+    font-size:clamp(32px,4vw,56px);letter-spacing:-0.03em;line-height:1.02;max-width:18ch;
+  }
+  .services .head p{max-width:38ch;color:var(--ink-2);font-size:16px;line-height:1.55}
+  .svcList{border-top:1px solid var(--rule)}
+  .svc{
+    display:grid;grid-template-columns:80px 1fr 280px 160px;gap:32px;align-items:center;
+    padding:34px 4px;border-bottom:1px solid var(--rule);
+    cursor:pointer;position:relative;transition:padding .35s cubic-bezier(.2,.8,.2,1), background .3s ease;
+  }
+  .svc:hover{background:rgba(20,17,13,0.03);padding:46px 12px}
+  .svc .num{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:14px;letter-spacing:0.08em;color:var(--muted)}
+  .svc .name{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:clamp(28px,3.4vw,46px);letter-spacing:-0.025em;line-height:1;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  .svc:hover .name{transform:translateX(8px)}
+  .svc .name em{font-style:italic;font-weight:500;color:var(--ink-2)}
+  .svc .deets{font-size:14px;color:var(--ink-2);line-height:1.5}
+  .svc .deets strong{font-weight:600;color:var(--ink);display:block;margin-bottom:4px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase}
+  .svc .arrow{
+    display:flex;align-items:center;justify-content:flex-end;gap:10px;
+    font-size:13px;color:var(--muted);
+  }
+  .svc .arrow svg{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  .svc:hover .arrow svg{transform:translate(6px,-6px)}
+  .svc:hover .arrow{color:var(--ink)}
+
+  /* ============ WORK ============ */
+  .work{padding:140px 0}
+  .work .head{display:flex;justify-content:space-between;align-items:end;gap:60px;margin-bottom:80px}
+  .work .head h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:clamp(32px,4vw,56px);letter-spacing:-0.03em;line-height:1.02;max-width:16ch}
+  .work .head h3 em{font-style:italic;font-weight:500;color:var(--ink-2)}
+  .work .head a{font-size:14px;display:inline-flex;align-items:center;gap:8px;color:var(--ink-2);border-bottom:1px solid var(--rule);padding-bottom:8px}
+  .case{display:grid;grid-template-columns:1.4fr 1fr;gap:64px;align-items:center;padding:60px 0;border-top:1px solid var(--rule)}
+  .case:last-child{border-bottom:1px solid var(--rule)}
+  .case .meta .yr{font-size:12px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase;margin-bottom:18px}
+  .case .meta h4{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:clamp(28px,3vw,42px);letter-spacing:-0.025em;line-height:1.04;margin-bottom:18px}
+  .case .meta h4 em{font-style:italic;font-weight:500;color:var(--ink-2)}
+  .case .meta p{color:var(--ink-2);font-size:15px;line-height:1.55;margin-bottom:24px;max-width:42ch}
+  .case .meta .tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+  .case .meta .tag{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);padding:6px 12px;border:1px solid var(--rule);border-radius:999px}
+  .case .meta .read{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:6px;transition:gap .25s ease}
+  .case .meta .read:hover{gap:14px}
+  .case .frame{
+    position:relative;aspect-ratio:4/5;overflow:hidden;
+    background:var(--paper-2);
+    will-change:transform;
+  }
+  .case .frame img{
+    width:100%;height:100%;object-fit:cover;
+    filter:grayscale(1) contrast(1.05) brightness(.98);
+    transform:scale(1.08);
+    transition:transform 1.2s cubic-bezier(.2,.8,.2,1), filter .6s ease;
+  }
+  .case:hover .frame img{transform:scale(1.0);filter:grayscale(1) contrast(1.15) brightness(1)}
+  .case.alt{grid-template-columns:1fr 1.4fr}
+  .case.alt .meta{order:2}
+  .case.alt .frame{order:1}
+
+  /* ============ NUMBERS ============ */
+  .numbers{padding:160px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .numbers .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .stat .v{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:clamp(80px,11vw,168px);letter-spacing:-0.05em;line-height:0.86;
+    color:var(--ink);position:relative;display:inline-block;
+  }
+  .stat .v sup{font-size:0.32em;color:var(--muted);font-weight:500;letter-spacing:0;top:-1.2em;margin-left:2px}
+  .stat .l{margin-top:14px;font-size:13px;letter-spacing:0.06em;color:var(--muted);max-width:18ch;line-height:1.4}
+  .stat .l strong{display:block;color:var(--ink);font-weight:600;letter-spacing:0;font-size:14px;margin-bottom:4px;text-transform:none}
+
+  /* ============ PROCESS (sticky) ============ */
+  .process{padding:0}
+  .processWrap{position:relative}
+  .processWrap .stage{
+    position:sticky;top:0;height:100dvh;
+    display:grid;grid-template-columns:1fr 1fr;align-items:center;
+    container-type:inline-size;
+  }
+  .processWrap .stage .left{padding:0 32px 0 max(32px,calc((100vw - 1320px)/2 + 32px))}
+  .processWrap .stage .right{padding:0 max(32px,calc((100vw - 1320px)/2 + 32px)) 0 32px}
+  .processWrap .stage .left h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:clamp(36px,4.6vw,68px);letter-spacing:-0.03em;line-height:1.02;max-width:14ch;margin-bottom:28px}
+  .processWrap .stage .left h3 em{font-style:italic;font-weight:500;color:var(--ink-2)}
+  .processWrap .stage .left .desc{font-size:16px;color:var(--ink-2);line-height:1.55;max-width:42ch;margin-bottom:36px}
+  .stepsBar{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule);max-width:380px}
+  .stepsBar .row{display:flex;align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:14px;color:var(--muted);transition:color .35s ease,padding .35s ease}
+  .stepsBar .row .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:12px;color:var(--muted);width:28px}
+  .stepsBar .row.active{color:var(--ink);padding:18px 0}
+  .stepsBar .row.active .n{color:var(--accent)}
+  .stepsBar .row .bar{flex:1;height:1px;background:var(--rule);position:relative;overflow:hidden}
+  .stepsBar .row .bar i{position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:0 50%;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+  .stepsBar .row.active .bar i{transform:scaleX(1)}
+
+  .stageVis{position:relative;width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+  .stageVis svg{width:90%;height:auto;color:var(--ink)}
+  .stageVis .panel{position:absolute;inset:0;opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;display:flex;align-items:center;justify-content:center}
+  .stageVis .panel.active{opacity:1;transform:translateY(0)}
+  .panel .badge{position:absolute;top:0;left:0;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;letter-spacing:0.16em;color:var(--muted);text-transform:uppercase}
+
+  /* ============ TESTIMONIAL ============ */
+  .testimonial{padding:180px 0}
+  .testimonial blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:clamp(28px,3.2vw,46px);line-height:1.18;letter-spacing:-0.02em;max-width:24ch;margin:0 auto;text-align:center;color:var(--ink);position:relative}
+  .testimonial blockquote em{font-style:italic;color:var(--ink-2);font-weight:500}
+  .testimonial .quoteMark{font-family:'Bricolage Grotesque',serif;font-size:200px;line-height:1;color:var(--ink);opacity:0.08;position:absolute;top:-90px;left:50%;transform:translateX(-50%);font-style:italic;pointer-events:none}
+  .testimonial .by{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:48px}
+  .testimonial .by img{width:48px;height:48px;border-radius:50%;object-fit:cover;filter:grayscale(1) contrast(1.05)}
+  .testimonial .by .info{display:flex;flex-direction:column}
+  .testimonial .by .name{font-weight:600;font-size:15px}
+  .testimonial .by .role{font-size:13px;color:var(--muted)}
+
+  /* ============ CTA / FOOTER ============ */
+  .ctaSec{padding:140px 0 60px;text-align:center;position:relative}
+  .ctaSec h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(64px,11vw,180px);letter-spacing:-0.05em;line-height:0.9;color:var(--ink)}
+  .ctaSec h2 em{font-style:italic;font-weight:600;color:var(--ink-2)}
+  .ctaSec .sub{max-width:38ch;margin:28px auto 40px;color:var(--ink-2);font-size:17px;line-height:1.5}
+  .ctaSec .pair{display:inline-flex;align-items:center;gap:12px}
+  .ctaSec .pill{padding:14px 22px;font-size:15px}
+  .ctaSec .ghostBig{padding:14px 22px;border-radius:999px;border:1px solid var(--ink);font-size:15px;color:var(--ink);display:inline-flex;align-items:center;gap:8px}
+  .ctaSec .ghostBig:hover{background:var(--ink);color:var(--paper)}
+
+  footer{padding:80px 0 40px;border-top:1px solid var(--rule);margin-top:80px}
+  footer .row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:48px}
+  footer h5{font-family:'Bricolage Grotesque',sans-serif;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;font-weight:600}
+  footer ul{list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px}
+  footer ul a:hover{color:var(--ink-2)}
+  footer .brandBlock .brand{font-size:24px}
+  footer .brandBlock p{margin-top:18px;color:var(--ink-2);font-size:14px;max-width:30ch;line-height:1.5}
+  footer .bottom{display:flex;justify-content:space-between;align-items:center;margin-top:80px;padding-top:24px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+
+  @media (max-width: 980px){
+    .logos{grid-template-columns:repeat(4,1fr)}
+    .case,.case.alt{grid-template-columns:1fr;gap:32px}
+    .case.alt .meta{order:2}.case.alt .frame{order:1}
+    .processWrap .stage{grid-template-columns:1fr}
+    .numbers .grid{grid-template-columns:repeat(2,1fr);gap:48px}
+    footer .row{grid-template-columns:1fr 1fr;gap:32px}
+    nav.bar ul{display:none}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+    .word > span{transform:none;opacity:1;filter:none}
+  }
+</style>
+</head>
+<body>
+
+<nav class="bar">
+  <div class="inner">
+    <a class="brand" href="#">Xila<sup>®</sup></a>
+    <ul>
+      <li><a href="#studio">Studio</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#journal">Journal</a></li>
+    </ul>
+    <div class="right">
+      <a class="ghost" href="#">Sign in</a>
+      <a class="pill" href="#contact">Get in touch <span class="arr">↗</span></a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="heroText container">
+    <span class="eyebrow"><span class="dot"></span> A studio of two natures</span>
+    <h1 class="display" id="heroHead">
+      <span class="word"><span>Bold</span></span>
+      <span class="word"><span>ideas</span></span>
+      <span class="word"><span>that</span></span>
+      <span class="word"><span>begin</span></span><br/>
+      <span class="word"><span>with</span></span>
+      <span class="word"><em><span>vision.</span></em></span>
+    </h1>
+    <p class="sub">Xila is a studio of designers and engineers building brands and products at the seam where human craft meets machine intelligence.</p>
+    <div class="ctaRow">
+      <a href="#contact" class="pill">Start a project <span class="arr">↗</span></a>
+      <a href="#work" class="link">See the work →</a>
+    </div>
+  </div>
+
+  <div class="art" id="heroArt">
+    <img src="assets/adam.jpg" alt="The Creation of Adam by Michelangelo" />
+  </div>
+
+  <div class="trustWrap">
+    <div class="container">
+      <div class="trustLabel">Trusted by builders at</div>
+      <div class="logos">
+        <div class="logo"><img src="https://cdn.simpleicons.org/vercel/14110d" alt=""/></div>
+        <div class="logo"><img src="https://cdn.simpleicons.org/stripe/14110d" alt=""/></div>
+        <div class="logo"><img src="https://cdn.simpleicons.org/linear/14110d" alt=""/></div>
+        <div class="logo"><img src="https://cdn.simpleicons.org/notion/14110d" alt=""/></div>
+        <div class="logo"><img src="https://cdn.simpleicons.org/figma/14110d" alt=""/></div>
+        <div class="logo"><img src="https://cdn.simpleicons.org/framer/14110d" alt=""/></div>
+        <div class="logo"><img src="https://cdn.simpleicons.org/loom/14110d" alt=""/></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <div class="container">
+    <svg class="ornament" viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.1"><circle cx="23" cy="23" r="22"/><path d="M2 23h42M23 2v42M8 8l30 30M38 8L8 38"/></svg>
+    <h2>
+      The work of the hand.<br/>
+      <em>The mind of the machine.</em>
+    </h2>
+    <div class="foot">
+      <span>Studios, 2014 — present</span>
+      <span class="sig">— Xila editorial</span>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="studio">
+  <div class="container">
+    <div class="head">
+      <h3>Four practices,<br/>one studio.</h3>
+      <p>We work as a single team across disciplines. Most engagements run three to nine months and end with something measurable shipped.</p>
+    </div>
+
+    <div class="svcList">
+      <a class="svc" href="#">
+        <span class="num">01</span>
+        <span class="name">Strategy <em>& research</em></span>
+        <span class="deets"><strong>Inputs</strong>Brand audit, competitive landscape, voice and narrative architecture</span>
+        <span class="arrow">Explore <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </a>
+      <a class="svc" href="#">
+        <span class="num">02</span>
+        <span class="name">Identity <em>& design</em></span>
+        <span class="deets"><strong>Outputs</strong>Visual systems, websites, product surfaces and motion language</span>
+        <span class="arrow">Explore <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </a>
+      <a class="svc" href="#">
+        <span class="num">03</span>
+        <span class="name">Engineering <em>& AI</em></span>
+        <span class="deets"><strong>Stacks</strong>Next.js, Swift, Rust services, model orchestration and agent UX</span>
+        <span class="arrow">Explore <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </a>
+      <a class="svc" href="#">
+        <span class="num">04</span>
+        <span class="name">Growth <em>& story</em></span>
+        <span class="deets"><strong>Channels</strong>Editorial, launch films, paid acquisition and lifecycle systems</span>
+        <span class="arrow">Explore <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="work" id="work">
+  <div class="container">
+    <div class="head">
+      <h3>Selected <em>work</em>, lately.</h3>
+      <a href="#">Archive of 62 projects <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+    </div>
+
+    <article class="case">
+      <div class="frame"><img src="https://images.unsplash.com/photo-1542556398-95fb5b9e1e08?w=1200&q=80" alt="" /></div>
+      <div class="meta">
+        <div class="yr">2025 · Identity · Web · Film</div>
+        <h4>Marrow Atelier — <em>a quiet rebirth for an old name.</em></h4>
+        <p>We rebuilt a 40-year-old Parisian ceramics atelier as a digital-first studio without losing the tactile weight of the craft.</p>
+        <div class="tags"><span class="tag">Brand</span><span class="tag">Web</span><span class="tag">Photography</span></div>
+        <a href="#" class="read">Read the case ↗</a>
+      </div>
+    </article>
+
+    <article class="case alt">
+      <div class="meta">
+        <div class="yr">2024 · Product · AI · Engineering</div>
+        <h4>Loom Field — <em>a tool that reads the room.</em></h4>
+        <p>A meeting intelligence product for distributed teams. Real-time transcription, sentiment and follow-through tracking, built around a quiet UI.</p>
+        <div class="tags"><span class="tag">Product</span><span class="tag">AI</span><span class="tag">Engineering</span></div>
+        <a href="#" class="read">Read the case ↗</a>
+      </div>
+      <div class="frame"><img src="https://images.unsplash.com/photo-1517502884422-41eaead166d4?w=1200&q=80" alt="" /></div>
+    </article>
+
+    <article class="case">
+      <div class="frame"><img src="https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?w=1200&q=80" alt="" /></div>
+      <div class="meta">
+        <div class="yr">2024 · Hospitality · Web · Story</div>
+        <h4>Casa Ondara — <em>a hotel that reads like a novel.</em></h4>
+        <p>An editorial website for a 12-room hotel on the Catalan coast. Long-read journal, slow image-led booking, and a paper guidebook printed from the same system.</p>
+        <div class="tags"><span class="tag">Hospitality</span><span class="tag">Editorial</span><span class="tag">CMS</span></div>
+        <a href="#" class="read">Read the case ↗</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers">
+  <div class="container">
+    <div class="grid">
+      <div class="stat"><span class="v" data-target="143">0</span><div class="l"><strong>Projects shipped</strong>From identity sprints to multi-year platforms</div></div>
+      <div class="stat"><span class="v" data-target="9">0</span><div class="l"><strong>Years working</strong>From a small back room in Lisbon, since 2016</div></div>
+      <div class="stat"><span class="v" data-target="62">0</span><div class="l"><strong>Clients on four continents</strong>Studios, founders, hospitality and culture</div></div>
+      <div class="stat"><span class="v" data-target="31">0</span><div class="l"><strong>Awards and citations</strong>Awwwards, FWA, Type Directors Club, IF</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="processWrap" id="processWrap">
+    <div class="stage">
+      <div class="left">
+        <h3>A studied,<br/><em>unhurried</em> method.</h3>
+        <p class="desc">Every engagement passes through four phases. The pace is deliberate. The detail compounds.</p>
+        <div class="stepsBar" id="stepsBar">
+          <div class="row active" data-i="0"><span class="n">01</span><span>Discover</span><span class="bar"><i></i></span></div>
+          <div class="row" data-i="1"><span class="n">02</span><span>Define</span><span class="bar"><i></i></span></div>
+          <div class="row" data-i="2"><span class="n">03</span><span>Design</span><span class="bar"><i></i></span></div>
+          <div class="row" data-i="3"><span class="n">04</span><span>Deploy</span><span class="bar"><i></i></span></div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="stageVis" id="stageVis">
+          <!-- Step 1: discover - a magnifying instrument over a grid -->
+          <div class="panel active" data-i="0">
+            <div class="badge">Phase one · Discover</div>
+            <svg viewBox="0 0 400 400" fill="none" stroke="currentColor" stroke-width="1">
+              <g opacity=".25">
+                <path d="M0 50H400M0 100H400M0 150H400M0 200H400M0 250H400M0 300H400M0 350H400"/>
+                <path d="M50 0V400M100 0V400M150 0V400M200 0V400M250 0V400M300 0V400M350 0V400"/>
+              </g>
+              <circle cx="170" cy="180" r="90" stroke-width="1.5"/>
+              <circle cx="170" cy="180" r="60" opacity=".3"/>
+              <circle cx="170" cy="180" r="30" opacity=".5"/>
+              <path d="M235 245 L320 330" stroke-width="2"/>
+              <circle cx="170" cy="180" r="2" fill="currentColor"/>
+            </svg>
+          </div>
+          <!-- Step 2: define - architectural plan / blueprint -->
+          <div class="panel" data-i="1">
+            <div class="badge">Phase two · Define</div>
+            <svg viewBox="0 0 400 400" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="60" y="80" width="280" height="240" stroke-width="1.4"/>
+              <path d="M60 160h280M60 240h280M140 80v240M220 80v240"/>
+              <rect x="60" y="80" width="80" height="80" fill="currentColor" opacity=".08"/>
+              <rect x="220" y="160" width="120" height="80" fill="currentColor" opacity=".18"/>
+              <path d="M30 50h60M30 350h60M310 50h60M310 350h60" opacity=".4"/>
+              <path d="M60 50V80M340 50V80M60 320V350M340 320V350" opacity=".4"/>
+            </svg>
+          </div>
+          <!-- Step 3: design - layered cards -->
+          <div class="panel" data-i="2">
+            <div class="badge">Phase three · Design</div>
+            <svg viewBox="0 0 400 400" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="80" y="60" width="240" height="320" stroke-width="1.2" fill="currentColor" fill-opacity=".05"/>
+              <rect x="60" y="80" width="240" height="320" stroke-width="1.2" fill="currentColor" fill-opacity=".05"/>
+              <rect x="40" y="100" width="240" height="320" stroke-width="1.4"/>
+              <path d="M70 140h180M70 165h140M70 195h180M70 220h120" />
+              <rect x="70" y="260" width="180" height="100" stroke-width="1" fill="currentColor" fill-opacity=".1"/>
+            </svg>
+          </div>
+          <!-- Step 4: deploy - vector arrow / launch -->
+          <div class="panel" data-i="3">
+            <div class="badge">Phase four · Deploy</div>
+            <svg viewBox="0 0 400 400" fill="none" stroke="currentColor" stroke-width="1">
+              <circle cx="200" cy="200" r="140" opacity=".2"/>
+              <circle cx="200" cy="200" r="100" opacity=".35"/>
+              <circle cx="200" cy="200" r="60" opacity=".55"/>
+              <path d="M120 280L280 120" stroke-width="2"/>
+              <path d="M210 120h70v70" stroke-width="2"/>
+              <circle cx="120" cy="280" r="4" fill="currentColor"/>
+              <circle cx="280" cy="120" r="4" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial">
+  <div class="container">
+    <blockquote>
+      <span class="quoteMark">&ldquo;</span>
+      They moved like a team that had been inside our company for years.<br/>
+      <em>The work shipped, the tone held, and the studio was kind about it.</em>
+    </blockquote>
+    <div class="by">
+      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" alt="" />
+      <div class="info">
+        <span class="name">Aurelia Kovač</span>
+        <span class="role">Founder, Marrow Atelier</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="ctaSec" id="contact">
+  <div class="container">
+    <h2>Let&rsquo;s build<br/><em>something quiet.</em></h2>
+    <p class="sub">A new identity, a careful product, an editorial site that breathes. Tell us what you have in mind.</p>
+    <div class="pair">
+      <a href="mailto:studio@xila.co" class="pill">studio@xila.co <span class="arr">↗</span></a>
+      <a href="#" class="ghostBig">Book a call</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="brandBlock">
+        <a class="brand" href="#">Xila<sup>®</sup></a>
+        <p>A studio of designers and engineers based in Lisbon, working in person and remotely.</p>
+      </div>
+      <div>
+        <h5>Studio</h5>
+        <ul><li><a href="#">About</a></li><li><a href="#">Process</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li></ul>
+      </div>
+      <div>
+        <h5>Work</h5>
+        <ul><li><a href="#">Selected</a></li><li><a href="#">Identity</a></li><li><a href="#">Product</a></li><li><a href="#">Editorial</a></li></ul>
+      </div>
+      <div>
+        <h5>Journal</h5>
+        <ul><li><a href="#">Field notes</a></li><li><a href="#">Studies</a></li><li><a href="#">Newsletter</a></li></ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul><li><a href="mailto:studio@xila.co">studio@xila.co</a></li><li><a href="#">Instagram</a></li><li><a href="#">Are.na</a></li></ul>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>© 2026 Xila Studios. All work shown with permission.</span>
+      <span>Lisbon · Made deliberately</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Hero headline word reveal
+  if(!reduce){
+    gsap.to('.hero h1 .word > span', {
+      y:0, opacity:1, filter:'blur(0px)',
+      duration:0.9, ease:'expo.out',
+      stagger:0.07, delay:0.2,
+    });
+    gsap.from('.hero .eyebrow, .hero .sub, .hero .ctaRow', {
+      y:20, opacity:0, duration:0.9, ease:'expo.out', stagger:0.08, delay:0.7
+    });
+    gsap.from('.trustWrap', {opacity:0, y:24, duration:0.9, ease:'expo.out', delay:1.0});
+  }
+
+  // Hero painting parallax (mouse + scroll)
+  if(!reduce){
+    const art = document.getElementById('heroArt');
+    const img = art ? art.querySelector('img') : null;
+    let mx=0, my=0, sx=0, sy=0;
+    window.addEventListener('mousemove',(e)=>{
+      const w = window.innerWidth, h = window.innerHeight;
+      mx = (e.clientX/w - 0.5);
+      my = (e.clientY/h - 0.5);
+    });
+    function loop(){
+      sx += (mx - sx)*0.06;
+      sy += (my - sy)*0.06;
+      if(img){
+        img.style.transform = `translate(${sx*16}px, ${sy*8}px) scale(1.04) rotate(${sx*0.4}deg)`;
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    gsap.to(art, {
+      yPercent: -6,
+      ease:'none',
+      scrollTrigger:{trigger:'.hero', start:'top top', end:'bottom top', scrub:0.6}
+    });
+  }
+
+  // Generic section word reveals
+  if(!reduce){
+    gsap.utils.toArray('h2, h3, h4, .manifesto .foot, .head p').forEach((el)=>{
+      gsap.from(el, {
+        y:30, opacity:0, filter:'blur(6px)',
+        duration:0.9, ease:'expo.out',
+        scrollTrigger:{trigger:el, start:'top 85%'}
+      });
+    });
+  }
+
+  // Services rows stagger in
+  if(!reduce){
+    gsap.from('.svc', {
+      y:30, opacity:0, duration:0.7, ease:'expo.out', stagger:0.08,
+      scrollTrigger:{trigger:'.svcList', start:'top 80%'}
+    });
+  }
+
+  // Numbers count-up
+  document.querySelectorAll('.stat .v').forEach((el)=>{
+    const target = +el.dataset.target;
+    ScrollTrigger.create({
+      trigger: el, start:'top 80%',
+      onEnter: ()=>{
+        if(reduce){el.textContent=target;return;}
+        const o = {n:0};
+        gsap.to(o,{n:target, duration:1.6, ease:'expo.out', onUpdate:()=>{el.textContent = Math.floor(o.n);}});
+      }
+    });
+  });
+
+  // Process sticky stage step transitions
+  if(!reduce){
+    const wrap = document.getElementById('processWrap');
+    const stage = wrap.querySelector('.stage');
+    // Build a long scroll length so steps progress
+    const steps = 4;
+    const vh = ()=> window.innerHeight;
+    const total = vh()*steps;
+    wrap.style.height = total + 'px';
+
+    ScrollTrigger.create({
+      trigger: wrap, start:'top top', end:`+=${total}`, pin: stage, pinSpacing:false,
+      onUpdate:(self)=>{
+        const idx = Math.min(steps-1, Math.floor(self.progress * steps));
+        document.querySelectorAll('#stepsBar .row').forEach((r,i)=>r.classList.toggle('active', i===idx));
+        document.querySelectorAll('#stageVis .panel').forEach((p,i)=>p.classList.toggle('active', i===idx));
+      }
+    });
+  } else {
+    // Reduced motion: stack steps statically
+    document.querySelectorAll('#stageVis .panel').forEach(p=>p.classList.add('active'));
+  }
+
+  // Magnetic CTA pill (subtle)
+  if(!reduce){
+    document.querySelectorAll('.pill, .ghostBig').forEach(btn=>{
+      btn.addEventListener('mousemove',(e)=>{
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - (r.left + r.width/2);
+        const y = e.clientY - (r.top + r.height/2);
+        btn.style.transform = `translate(${x*0.18}px, ${y*0.18}px)`;
+      });
+      btn.addEventListener('mouseleave',()=>{ btn.style.transform=''; });
+    });
+  }
+
+  // Refresh after fonts
+  document.fonts && document.fonts.ready.then(()=>ScrollTrigger.refresh());
+</script>
+</body>
+</html>
